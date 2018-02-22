@@ -3,9 +3,13 @@
     "displayName": "matlab-formatter",
     "description": "format matlab code",
     "version": "0.0.1",
-    "publisher": "Mogli",
+    "publisher": "AffenWiesel",
     "engines": {
         "vscode": "^1.20.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/affenwiesel/matlab-formatter-vscode"
     },
     "categories": [
         "Other"
