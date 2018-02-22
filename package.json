@@ -14,7 +14,7 @@
         "matlab"
     ],
     "activationEvents": [
-        "*"
+        "onLanguage:matlab"
     ],
     "main": "./extension",
     "contributes": {
@@ -24,7 +24,7 @@
             "properties": {
                 "matlab-formatter.path": {
                     "type": "string",
-                    "default": "python matlab_formatter",
+                    "default": "matlab_formatter.py",
                     "description": "path to matlab_formatter executable"
                 }
             }
