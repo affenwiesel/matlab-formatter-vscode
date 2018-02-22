@@ -14,16 +14,20 @@ def extract(part):
     if m:
         return (m[1], m[2], '')
 
-    # number
-    m = re.match(r'(^|.*\S)\s*(\d+\.?\d*)\s*([eE][+-]?)\s*(\d+)\s*(\S.*|$)', part)
+    # decimal number
+    m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
     if m:
-        return (m[1] + ' ', m[2] + m[3] + m[4], ' ' + m[5])
+        return (m[1] + ' ' + m[2], m[3], m[4] + ' ' + m[5])
+
+    # rational number
+    m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)\s*(\/)\s*(\d+\.?\d*)\s*(\S.*|$)', part)
+    if m:
+        return (m[1] + ' ' + m[2], m[3], m[4] + ' ' + m[5])
 
     # signum
-    m = re.match(r'(^|.*[\)\(\[\{,;:])\s*(\+|\-)\s*(\S.*|$)', part)
+    m = re.match(r'(^|.*[\(\[\{,;:])\s*(\+|\-)\s*(\S.*|$)', part)
     if m:
-        if re.match(r'.*\)', m[1]):
-            return (m[1] + ' ', m[2], m[3])
+        print(m[2]+m[3])
         return (m[1], m[2], m[3])
 
     # incrementor
@@ -62,7 +66,7 @@ def extract(part):
         return (m[1] + ' ', m[2], ' ' + m[3])
 
     # function call
-    m = re.match(r'(.*[A-Za-z0-9_])\s*(\(|\[|\{)\s*(\S.*|$)', part)
+    m = re.match(r'(.*[A-Za-z0-9_])\s*(\()\s*(\S.*|$)', part)
     if m:
         return (m[1], m[2], m[3])
 
@@ -80,6 +84,11 @@ def extract(part):
     m = re.match(r'(^|.*\S)\s*(,|;)\s*(\S.*|$)', part)
     if m:
         return (m[1], m[2], ' ' + m[3])
+
+    # multiple whitespace
+    m = re.match(r'(^|.*\S)(\s{2,})(\S.*|$)', part)
+    if m:
+        return (m[1], ' ', m[3])
 
     return 0
 

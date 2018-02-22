@@ -25,7 +25,7 @@
                 "matlab-formatter.path": {
                     "type": "string",
                     "default": "matlab_formatter.py",
-                    "description": "path to matlab_formatter executable"
+                    "description": "path to matlab_formatter.py"
                 }
             }
         }
