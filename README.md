@@ -2,7 +2,7 @@
 
 matlab-formatter provides a python script to format matlab-code as well as the requirred VScode api
 
-![Example](images/example.gif\)
+![Example](images/example.gif)
 
 ## Requirements
 - python 3
