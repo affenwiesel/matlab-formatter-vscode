@@ -27,7 +27,6 @@ def extract(part):
     # signum
     m = re.match(r'(^|.*[\(\[\{,;:])\s*(\+|\-)\s*(\S.*|$)', part)
     if m:
-        print(m[2]+m[3])
         return (m[1], m[2], m[3])
 
     # incrementor
@@ -168,6 +167,6 @@ def main(filename):
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        print('usage: matlab_formatter.py filename')
+        print('usage: matlab_formatter.py filename', file=sys.stderr)
     else:
         main(sys.argv[1])

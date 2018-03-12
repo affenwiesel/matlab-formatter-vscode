@@ -9,10 +9,3 @@ matlab-formatter provides a python script to format matlab-code as well as the r
 
 ## Extension Settings
 * `matlab-formatter.path`: path to matlab_formatter.py which is also included in this package (./formatter/matlab_formatter.py)
-
-
-## Release Notes
-
-### 1.0.0
-
-Initial release of matlab-formatter
