@@ -28,8 +28,13 @@
             "properties": {
                 "matlab-formatter.path": {
                     "type": "string",
-                    "default": "matlab_formatter.py",
+                    "default": "C:\\Users\\Mogli\\.vscode\\extensions\\matlab-formatter\\formatter\\matlab_formatter.py",
                     "description": "path to matlab_formatter.py"
+                },
+                "matlab-formatter.indentwidth": {
+                    "type": "integer",
+                    "default": 4,
+                    "description": "number of spaces used for indentation"
                 }
             }
         },

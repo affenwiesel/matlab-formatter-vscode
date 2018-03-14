@@ -101,29 +101,29 @@ def format(part):
 
 
 # take care of indentation and call format(line)
-def formatLine(lvl, line):
+def formatLine(ilvl, iwidth, line):
     ctrlstart = r'(^|\s*)(function|if|while|for|switch)\s*(\S.*|$)'
     ctrlcont = r'(^|\s*)(elseif|else|case|catch|otherwise)\s*(\S.*|$)'
     ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)\s*(\S.*|$)'
 
-    width = 4*' '
+    width = iwidth*' '
 
     m = re.match(ctrlstart, line)
     if m:
-        return (lvl+1, lvl*width + m[2] + ' ' + format(m[3]).rstrip())
+        return (ilvl+1, ilvl*width + m[2] + ' ' + format(m[3]).rstrip())
 
     m = re.match(ctrlcont, line)
     if m:
-        return (lvl, (lvl-1)*width + m[2] + ' ' + format(m[3]).rstrip())
+        return (ilvl, (ilvl-1)*width + m[2] + ' ' + format(m[3]).rstrip())
 
     m = re.match(ctrlend, line)
     if m:
-        return (lvl-1, (lvl-1)*width + m[2] + ' ' + format(m[3]).rstrip())
+        return (ilvl-1, (ilvl-1)*width + m[2] + ' ' + format(m[3]).rstrip())
 
-    return (lvl, lvl*width + format(line).strip())
+    return (ilvl, ilvl*width + format(line).strip())
 
 
-def main(filename, start, end):
+def main(filename, indentwidth, start, end):
     indent_new = 0
     wlines = rlines = []
     blank = True
@@ -147,7 +147,7 @@ def main(filename, start, end):
 
         # format line
         indent = indent_new
-        (indent_new, line) = formatLine(indent, line)
+        (indent_new, line) = formatLine(indent, indentwidth, line)
 
         # add newline before block
         if indent < indent_new and not blank:
@@ -173,12 +173,16 @@ def main(filename, start, end):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print('usage: matlab_formatter.py filename [startLine endLine]', file=sys.stderr)
+    argc = len(sys.argv)
+    if argc < 2:
+        print('usage: matlab_formatter.py filename [indentwidth] [startLine endLine]', file=sys.stderr)
     else:
+        indent = 4
+        if argc > 2:
+            indent = int(sys.argv[2])
         start = 0
         end = -1
-        if len(sys.argv) == 4:
-            start = int(sys.argv[2]) - 1
-            end = int(sys.argv[3])
-        main(sys.argv[1], start, end)
+        if argc > 4:
+            start = int(sys.argv[3]) - 1
+            end = int(sys.argv[4])
+        main(sys.argv[1], indent, start, end)
