@@ -7,87 +7,87 @@ def extract(part):
     # string
     m = re.match(r'(^|.*[\(\[\{,;=\+])\s*(\'.*\')\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2], m[3])
+        return (m.group(1), m.group(2), m.group(3))
 
     # comment
     m = re.match(r'(^|.*\S)\s*(%.*)', part)
     if m:
-        return (m[1], m[2], '')
+        return (m.group(1), m.group(2), '')
 
     # decimal number
     m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
     if m:
-        return (m[1] + ' ' + m[2], m[3], m[4] + ' ' + m[5])
+        return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
 
     # rational number
     m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)\s*(\/)\s*(\d+\.?\d*)\s*(\S.*|$)', part)
     if m:
-        return (m[1] + ' ' + m[2], m[3], m[4] + ' ' + m[5])
+        return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
 
     # signum
     m = re.match(r'(^|.*[\(\[\{,;:])\s*(\+|\-)\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2], m[3])
+        return (m.group(1), m.group(2), m.group(3))
 
     # incrementor
     m = re.match(r'(^|.*\S)\s*(\+|\-)\s*(\+|\-)\s*([\)\]\},;].*|$)', part)
     if m:
-        return (m[1], m[2] + m[3], m[4])
+        return (m.group(1), m.group(2) + m.group(3), m.group(4))
 
     # not
     m = re.match(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2], m[3])
+        return (m.group(1), m.group(2), m.group(3))
 
     # colon
     m = re.match(r'(^|.*\S)\s*(:)\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2], m[3])
+        return (m.group(1), m.group(2), m.group(3))
 
     # .power
     m = re.match(r'(^|.*\S)\s*(\.)\s*(\^)\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2] + m[3], m[4])
+        return (m.group(1), m.group(2) + m.group(3), m.group(4))
 
     # power
     m = re.match(r'(^|.*\S)\s*(\^)\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2], m[3])
+        return (m.group(1), m.group(2), m.group(3))
 
     # 2 operators
     m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&)\s*(<|>|=|\+|\-|\*|\&|\|)\s*(\S.*|$)', part)
     if m:
-        return (m[1] + ' ', m[2] + m[3], ' ' + m[4])
+        return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
 
     # 1 operator
     m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&)\s*(\S.*|$)', part)
     if m:
-        return (m[1] + ' ', m[2], ' ' + m[3])
+        return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
 
     # function call
     m = re.match(r'(.*[A-Za-z0-9_])\s*(\()\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2], m[3])
+        return (m.group(1), m.group(2), m.group(3))
 
     # parenthesis open
     m = re.match(r'(^|.*)(\(|\[|\{)\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2], m[3])
+        return (m.group(1), m.group(2), m.group(3))
 
     # parenthesis close
     m = re.match(r'(^|.*\S)\s*(\)|\]|\})(.*|$)', part)
     if m:
-        return (m[1], m[2], m[3])
+        return (m.group(1), m.group(2), m.group(3))
 
     # comma/semicolon
     m = re.match(r'(^|.*\S)\s*(,|;)\s*(\S.*|$)', part)
     if m:
-        return (m[1], m[2], ' ' + m[3])
+        return (m.group(1), m.group(2), ' ' + m.group(3))
 
     # multiple whitespace
     m = re.match(r'(^|.*\S)(\s{2,})(\S.*|$)', part)
     if m:
-        return (m[1], ' ', m[3])
+        return (m.group(1), ' ', m.group(3))
 
     return 0
 
@@ -110,15 +110,15 @@ def formatLine(ilvl, iwidth, line):
 
     m = re.match(ctrlstart, line)
     if m:
-        return (ilvl+1, ilvl*width + m[2] + ' ' + format(m[3]).rstrip())
+        return (ilvl+1, ilvl*width + m.group(2) + ' ' + format(m.group(3)).rstrip())
 
     m = re.match(ctrlcont, line)
     if m:
-        return (ilvl, (ilvl-1)*width + m[2] + ' ' + format(m[3]).rstrip())
+        return (ilvl, (ilvl-1)*width + m.group(2) + ' ' + format(m.group(3)).rstrip())
 
     m = re.match(ctrlend, line)
     if m:
-        return (ilvl-1, (ilvl-1)*width + m[2] + ' ' + format(m[3]).rstrip())
+        return (ilvl-1, (ilvl-1)*width + m.group(2) + ' ' + format(m.group(3)).rstrip())
 
     return (ilvl, ilvl*width + format(line).strip())
 
@@ -134,8 +134,8 @@ def main(filename, indentwidth, start, end):
     p = r'(\s*)(.*)'
     m = re.match(p, rlines[0])
     if m:
-        indent_new = len(m[1])//4
-        rlines[0] = m[2]
+        indent_new = len(m.group(1))//4
+        rlines[0] = m.group(2)
 
     for line in rlines:
         # remove additional newlines

@@ -3,6 +3,9 @@ All notable changes to the "matlab-formatter" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+### 1.1.1
+Add compatibility for python 3.6
+
 ### 1.1.0
 New Features:
 * format selection
