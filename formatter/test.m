@@ -5,10 +5,10 @@ function [minS, s] = computeS(Ap, y, P)
 
        for ii = 1:length(P)
 
-              if P(ii)
-                     iii++;
-                     s(ii) = sP(iii);
-              end
+            if P(ii)
+                iii++;
+                s(ii) = sP(iii);
+            end
 
        end
 

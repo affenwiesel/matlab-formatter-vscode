@@ -5,6 +5,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### 1.1.1
 Add compatibility for python 3.6
+Bugfix: enable variable indentwidth for format selection
 
 ### 1.1.0
 New Features:
