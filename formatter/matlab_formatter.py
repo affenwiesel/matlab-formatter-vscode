@@ -134,7 +134,7 @@ def main(filename, indentwidth, start, end):
     p = r'(\s*)(.*)'
     m = re.match(p, rlines[0])
     if m:
-        indent_new = len(m.group(1))//4
+        indent_new = len(m.group(1))//indentwidth
         rlines[0] = m.group(2)
 
     for line in rlines:
