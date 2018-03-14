@@ -17,25 +17,29 @@ class MatlabFormatter {
         }
     }
 
-    formatDocument(document) {
-        let name = document.fileName;
+    formatDocument(document, range) {
+        // let name = document.fileName;
         return new Promise((resolve, reject) => {
-            this.format(name, document).then((res) => {
+            this.format(document, range).then((res) => {
                 return resolve(res);
             });
 
         });
     }
 
-    format(filename, document) {
+    format(document, range) {
         return new Promise((resolve, reject) => {
             let formatter = vscode.workspace.getConfiguration('matlab-formatter')['path'];
-            cp.exec(this.py + formatter + ' "' + filename + '"', (err, stdout, stderr) => {
+            let filename = ' "' + document.fileName + '"';
+            let start = " " + (range.start.line + 1);
+            let end = " " + (range.end.line + 1);
+            cp.exec(this.py + formatter + filename + start + end, (err, stdout, stderr) => {
                 if (stdout != '') {
-                    var edit = [vscode.TextEdit.replace(fullRange(document), stdout)];
+                    let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line+1, 0));
+                    var edit = [vscode.TextEdit.replace(toreplace, stdout)];
                     return resolve(edit);
                 }
-                vscode.window.showErrorMessage('path to matlab_formatter not found')
+                vscode.window.showErrorMessage('formatting failed')
                 return resolve(null);
             });
         });
@@ -50,14 +54,21 @@ class MatlabDocumentRangeFormatter {
     }
     provideDocumentFormattingEdits(document, options, token) {
         return document.save().then(() => {
-            return this.formatter.formatDocument(document);
+            return this.formatter.formatDocument(document, fullRange(document));
+        });
+    }
+    provideDocumentRangeFormattingEdits(document, range, options, token) {
+        return document.save().then(() => {
+            return this.formatter.formatDocument(document, range);
         });
     }
 }
 
 function activate(context) {
     channel = vscode.window.createOutputChannel('matlab-formatter');
-    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(MODE, new MatlabDocumentRangeFormatter()));
+    const formatter = new MatlabDocumentRangeFormatter();
+    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(MODE, formatter));
+    context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider(MODE, formatter));
 }
 exports.activate = activate;
 // this method is called when your extension is deactivated

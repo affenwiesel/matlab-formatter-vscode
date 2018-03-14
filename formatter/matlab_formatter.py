@@ -2,7 +2,7 @@
 import re
 import sys
 
-# extract divide string into three parts by extracting and formatting certain expressions
+# divide string into three parts by extracting and formatting certain expressions
 def extract(part):
     # string
     m = re.match(r'(^|.*[\(\[\{,;=\+])\s*(\'.*\')\s*(\S.*|$)', part)
@@ -120,19 +120,26 @@ def formatLine(lvl, line):
     if m:
         return (lvl-1, (lvl-1)*width + m[2] + ' ' + format(m[3]).rstrip())
 
-    return (lvl, lvl*width + format(line.strip()))
+    return (lvl, lvl*width + format(line).strip())
 
 
-def main(filename):
+def main(filename, start, end):
     indent_new = 0
     wlines = rlines = []
     blank = True
     with open(filename, 'r') as f:
-        rlines = f.readlines()
+        rlines = f.readlines()[start:end]
+
+    # get initial indent lvl
+    p = r'(\s*)(.*)'
+    m = re.match(p, rlines[0])
+    if m:
+        indent_new = len(m[1])//4
+        rlines[0] = m[2]
 
     for line in rlines:
         # remove additional newlines
-        if re.match(r'^\s*$',line):
+        if re.match(r'^\s*$', line):
             if not blank:
                 blank = True
                 wlines.append('')
@@ -157,7 +164,7 @@ def main(filename):
             blank = False
 
     # remove last line if blank
-    if wlines and not wlines[-1]:
+    while wlines and not wlines[-1]:
         wlines.pop()
 
     # write output
@@ -166,7 +173,12 @@ def main(filename):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print('usage: matlab_formatter.py filename', file=sys.stderr)
+    if len(sys.argv) < 2:
+        print('usage: matlab_formatter.py filename [startLine endLine]', file=sys.stderr)
     else:
-        main(sys.argv[1])
+        start = 0
+        end = -1
+        if len(sys.argv) == 4:
+            start = int(sys.argv[2]) - 1
+            end = int(sys.argv[3])
+        main(sys.argv[1], start, end)
