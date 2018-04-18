@@ -3,6 +3,10 @@ All notable changes to the "matlab-formatter" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+### 1.1.3
+Bugfix: include last line when formatting
+    Thanks to fasiha for finding the bug!
+
 ### 1.1.2
 Bugfix: enable variable indentwidth for format selection
 

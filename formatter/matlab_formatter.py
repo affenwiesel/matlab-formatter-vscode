@@ -181,7 +181,7 @@ if __name__ == '__main__':
         if argc > 2:
             indent = int(sys.argv[2])
         start = 0
-        end = -1
+        end = None
         if argc > 4:
             start = int(sys.argv[3]) - 1
             end = int(sys.argv[4])
