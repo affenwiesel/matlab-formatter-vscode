@@ -54,12 +54,12 @@ def extract(part):
     if m:
         return (m.group(1), m.group(2), m.group(3))
 
-    # 2 operators
+    # combined operator
     m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~)\s*(<|>|=|\+|\-|\*|/|\&|\|)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
 
-    # 1 operator
+    # single operator
     m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&|!|~)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
