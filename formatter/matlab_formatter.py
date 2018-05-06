@@ -34,10 +34,10 @@ def extract(part):
     if m:
         return (m.group(1), m.group(2) + m.group(3), m.group(4))
 
-    # not
-    m = re.match(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)', part)
-    if m:
-        return (m.group(1), m.group(2), m.group(3))
+    # # not
+    # m = re.match(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)', part)
+    # if m:
+    #     return (m.group(1), m.group(2), m.group(3))
 
     # colon
     m = re.match(r'(^|.*\S)\s*(:)\s*(\S.*|$)', part)
@@ -55,12 +55,12 @@ def extract(part):
         return (m.group(1), m.group(2), m.group(3))
 
     # 2 operators
-    m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&)\s*(<|>|=|\+|\-|\*|\&|\|)\s*(\S.*|$)', part)
+    m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~)\s*(<|>|=|\+|\-|\*|\&|\|)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
 
     # 1 operator
-    m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&)\s*(\S.*|$)', part)
+    m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&|!|~)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
 
