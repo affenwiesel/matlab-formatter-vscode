@@ -25,7 +25,7 @@ def extract(part):
         return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
 
     # signum
-    m = re.match(r'(^|.*[\(\[\{,;:])\s*(\+|\-)\s*(\S.*|$)', part)
+    m = re.match(r'(^|.*[\(\[\{,;:=])\s*(\+|\-)\s*(\S.*|$)', part)
     if m:
         return (m.group(1), m.group(2), m.group(3))
 
@@ -55,7 +55,7 @@ def extract(part):
         return (m.group(1), m.group(2), m.group(3))
 
     # 2 operators
-    m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~)\s*(<|>|=|\+|\-|\*|\&|\|)\s*(\S.*|$)', part)
+    m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~)\s*(<|>|=|\+|\-|\*|/|\&|\|)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
 
