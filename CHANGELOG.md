@@ -1,6 +1,8 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 1.1.5
+Bugfix: implement support for combined dot-operator + assignment (e.g. .+=)
 
 ### 1.1.4
 Bugfix: implement support for more combined operators

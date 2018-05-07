@@ -14,53 +14,58 @@ def extract(part):
     if m:
         return (m.group(1), m.group(2), '')
 
-    # decimal number
+    # decimal number (e.g. 5.6E-3)
     m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
 
-    # rational number
+    # rational number (e.g. 1/4)
     m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)\s*(\/)\s*(\d+\.?\d*)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
 
-    # signum
+    # signum (unary - or +)
     m = re.match(r'(^|.*[\(\[\{,;:=])\s*(\+|\-)\s*(\S.*|$)', part)
     if m:
         return (m.group(1), m.group(2), m.group(3))
 
-    # incrementor
+    # incrementor (++ or --)
     m = re.match(r'(^|.*\S)\s*(\+|\-)\s*(\+|\-)\s*([\)\]\},;].*|$)', part)
     if m:
         return (m.group(1), m.group(2) + m.group(3), m.group(4))
-
-    # # not
-    # m = re.match(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)', part)
-    # if m:
-    #     return (m.group(1), m.group(2), m.group(3))
 
     # colon
     m = re.match(r'(^|.*\S)\s*(:)\s*(\S.*|$)', part)
     if m:
         return (m.group(1), m.group(2), m.group(3))
 
-    # .power
+    # dot-operator-assignmet (e.g. .+=)
+    m = re.match(r'(^|.*\S)\s*(\.)\s*(\+|\-|\*|/|\^)\s*(=)\s*(\S.*|$)', part)
+    if m:
+        return (m.group(1) + ' ', m.group(2) + m.group(3) + m.group(4), ' ' + m.group(5))
+
+    # .power (.^)
     m = re.match(r'(^|.*\S)\s*(\.)\s*(\^)\s*(\S.*|$)', part)
     if m:
         return (m.group(1), m.group(2) + m.group(3), m.group(4))
 
-    # power
+    # power (^)
     m = re.match(r'(^|.*\S)\s*(\^)\s*(\S.*|$)', part)
     if m:
         return (m.group(1), m.group(2), m.group(3))
 
-    # combined operator
-    m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~)\s*(<|>|=|\+|\-|\*|/|\&|\|)\s*(\S.*|$)', part)
+    # combined operator (e.g. +=, .+, etc.)
+    m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~|\^)\s*(<|>|=|\+|\-|\*|/|\&|\|)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
 
-    # single operator
-    m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&|!|~)\s*(\S.*|$)', part)
+    # not (~ or !)
+    m = re.match(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)', part)
+    if m:
+        return (m.group(1), m.group(2), m.group(3))
+
+    # single operator (e.g. +, -, etc.)
+    m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&)\s*(\S.*|$)', part)
     if m:
         return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
 
