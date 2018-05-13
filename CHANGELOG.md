@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 1.1.6
+Change default formatter-path to it's default windows location
+
 ### 1.1.5
 Bugfix: implement support for combined dot-operator + assignment (e.g. .+=)
 
