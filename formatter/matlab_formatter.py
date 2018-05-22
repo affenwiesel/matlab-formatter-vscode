@@ -107,23 +107,23 @@ def format(part):
 
 # take care of indentation and call format(line)
 def formatLine(ilvl, iwidth, line):
-    ctrlstart = r'(^|\s*)(function|if|while|for|switch)\s*(\S.*|$)'
-    ctrlcont = r'(^|\s*)(elseif|else|case|catch|otherwise)\s*(\S.*|$)'
-    ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)\s*(\S.*|$)'
+    ctrlstart = r'(^|\s*)(function|if|while|for|switch)(\s+\S.*|\s*$)'
+    ctrlcont = r'(^|\s*)(elseif|else|case|catch|otherwise)(\s+\S.*|\s*$)'
+    ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
 
     width = iwidth*' '
 
     m = re.match(ctrlstart, line)
     if m:
-        return (ilvl+1, ilvl*width + m.group(2) + ' ' + format(m.group(3)).rstrip())
+        return (ilvl+1, ilvl*width + m.group(2) + ' ' + format(m.group(3)).strip())
 
     m = re.match(ctrlcont, line)
     if m:
-        return (ilvl, (ilvl-1)*width + m.group(2) + ' ' + format(m.group(3)).rstrip())
+        return (ilvl, (ilvl-1)*width + m.group(2) + ' ' + format(m.group(3)).strip())
 
     m = re.match(ctrlend, line)
     if m:
-        return (ilvl-1, (ilvl-1)*width + m.group(2) + ' ' + format(m.group(3)).rstrip())
+        return (ilvl-1, (ilvl-1)*width + m.group(2) + ' ' + format(m.group(3)).strip())
 
     return (ilvl, ilvl*width + format(line).strip())
 

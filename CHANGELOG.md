@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 1.1.7
+Bugfix: Don't break words into block-start-keywords
+
 ### 1.1.6
 Change default formatter-path to it's default windows location
 
