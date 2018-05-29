@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 1.1.8
+Bugfix: Correct indenting of try-catch block
+
 ### 1.1.7
 Bugfix: Don't break words into block-start-keywords
 

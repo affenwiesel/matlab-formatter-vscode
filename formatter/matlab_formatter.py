@@ -107,8 +107,8 @@ def format(part):
 
 # take care of indentation and call format(line)
 def formatLine(ilvl, iwidth, line):
-    ctrlstart = r'(^|\s*)(function|if|while|for|switch)(\s+\S.*|\s*$)'
-    ctrlcont = r'(^|\s*)(elseif|else|case|catch|otherwise)(\s+\S.*|\s*$)'
+    ctrlstart = r'(^|\s*)(function|if|while|for|switch|try)(\s+\S.*|\s*$)'
+    ctrlcont = r'(^|\s*)(elseif|else|case|catch|otherwise|catch)(\s+\S.*|\s*$)'
     ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
 
     width = iwidth*' '
