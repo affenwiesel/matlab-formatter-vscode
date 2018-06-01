@@ -29,7 +29,7 @@
                 "matlab-formatter.path": {
                     "type": "string",
                     "default": "%HOMEPATH%\\.vscode\\extensions\\matlab-formatter\\formatter\\matlab_formatter.py",
-                    "description": "path to matlab_formatter.py"
+                    "description": "absolute path to matlab_formatter.py"
                 },
                 "matlab-formatter.indentwidth": {
                     "type": "integer",

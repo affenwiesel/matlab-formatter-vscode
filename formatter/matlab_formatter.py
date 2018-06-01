@@ -133,7 +133,7 @@ def main(filename, indentwidth, start, end):
     wlines = rlines = []
     blank = True
     with open(filename, 'r') as f:
-        rlines = f.readlines()[start:end]
+        rlines = f.readlines()[start-1:end]
 
     # get initial indent lvl
     p = r'(\s*)(.*)'
@@ -178,16 +178,20 @@ def main(filename, indentwidth, start, end):
 
 
 if __name__ == '__main__':
+
     argc = len(sys.argv)
+    options = {'--startLine' : 0, '--endLine' : None, '--indentWidth' : 4}
     if argc < 2:
-        print('usage: matlab_formatter.py filename [indentwidth] [startLine endLine]', file=sys.stderr)
+        print('usage: matlab_formatter.py filename [options...]\n  OPTIONS:\n    --startLine=\\d\n    --endLine=\\d\n    --indentWidth=\\d\n', file=sys.stderr)
     else:
-        indent = 4
-        if argc > 2:
-            indent = int(sys.argv[2])
-        start = 0
-        end = None
-        if argc > 4:
-            start = int(sys.argv[3]) - 1
-            end = int(sys.argv[4])
+        for arg in sys.argv[2:] :
+            key, value = arg.split('=')
+            try:
+                value = eval(value)
+            finally:
+                options[key.strip()] = value
+
+        indent = options['--indentWidth']
+        start = options['--startLine']
+        end = options['--endLine']
         main(sys.argv[1], indent, start, end)
