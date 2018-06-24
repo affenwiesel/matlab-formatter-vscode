@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 1.2.0
+Feature: Add support for one-line control sequence (if, for, while)
+
 ### 1.1.8
 Bugfix: Correct indenting of try-catch block
 

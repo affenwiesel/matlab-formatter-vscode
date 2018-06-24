@@ -107,11 +107,15 @@ def format(part):
 
 # take care of indentation and call format(line)
 def formatLine(ilvl, iwidth, line):
+    ctrl1line = r'(^|\s*)(if|while|for)(\s+\S.*)(end|endif|endwhile|endfor)(\s*$)'
     ctrlstart = r'(^|\s*)(function|if|while|for|switch|try)(\s+\S.*|\s*$)'
     ctrlcont = r'(^|\s*)(elseif|else|case|catch|otherwise|catch)(\s+\S.*|\s*$)'
     ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
 
     width = iwidth*' '
+    m = re.match(ctrl1line, line)
+    if m:
+        return (ilvl, ilvl*width + m.group(2) + ' ' + format(m.group(3)).strip() + ' ' + m.group(4))
 
     m = re.match(ctrlstart, line)
     if m:
