@@ -1,3 +1,1 @@
-if condition1
-    while condition2, continue, end
-end
+disp(['some' Variable 'somet text'])

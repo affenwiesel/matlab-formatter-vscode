@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 1.2.1
+Bugfix: whitespace after string
+
 ### 1.2.0
 Feature: Add support for one-line control sequence (if, for, while)
 

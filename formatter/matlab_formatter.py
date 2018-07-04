@@ -5,7 +5,7 @@ import sys
 # divide string into three parts by extracting and formatting certain expressions
 def extract(part):
     # string
-    m = re.match(r'(^|.*[\(\[\{,;=\+])\s*(\'.*\')\s*(\S.*|$)', part)
+    m = re.match(r'(^|.*[\(\[\{,;=\+\s])\s*(\'[^\']*\')\s*([\)\}\],;].*|\s.*|$)', part)
     if m:
         return (m.group(1), m.group(2), m.group(3))
 
@@ -184,7 +184,7 @@ def main(filename, indentwidth, start, end):
 if __name__ == '__main__':
 
     argc = len(sys.argv)
-    options = {'--startLine' : 0, '--endLine' : None, '--indentWidth' : 4}
+    options = {'--startLine' : 1, '--endLine' : None, '--indentWidth' : 4}
     if argc < 2:
         print('usage: matlab_formatter.py filename [options...]\n  OPTIONS:\n    --startLine=\\d\n    --endLine=\\d\n    --indentWidth=\\d\n', file=sys.stderr)
     else:
