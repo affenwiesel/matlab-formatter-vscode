@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.0.0
+Rewrite the formatter in an object oriented way to implement new features more easyly.
+
 ### 1.2.1
 Bugfix: whitespace after string
 
