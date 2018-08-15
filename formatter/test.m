@@ -1,15 +1,25 @@
 n = input('Enter a number: ');
 
+matrix = [1, 2, 3;
+          4, 5, 6;
+          7, 8, 9];
+
+vector = [1
+          2
+          3
+          4];
+
 switch n
     case -1
-
+        %if
         if (a && ~ b || c | ! d)
             pass
         elseif condition
             pass
         else
-
+            %bla
             switch n
+
                 case -1
 
                     if condition
@@ -18,6 +28,7 @@ switch n
                         pass
                     else
                         pass
+
                     end
 
                 case 0

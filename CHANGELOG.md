@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.1.1
+Improve matrix formatting
+
+### 2.1.0
+* Feature: Add better formatting for matrices
+
+* Bugfix: Remove unwanted newlines after block-introducitng comment
+
 ### 2.0.0
 Rewrite the formatter in an object oriented way to implement new features more easyly.
 

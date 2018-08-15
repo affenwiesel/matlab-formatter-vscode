@@ -10,11 +10,16 @@ class Formatter:
     ctrlstart_2 = r'(^|\s*)(switch)(\s+\S.*|\s*$)'
     ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)(\s+\S.*|\s*$)'
     ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
+    matrixstart = r'(^|\s*)(.*)(\[[^\]]*)(\s*$)'
+    matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
+    linecomment = r'(^|\s*)%.*$'
 
     # indentation
     ilvl=0
     istep=0
     iwidth=0
+    matrix=0
+    comment=0
 
     def __init__(self, indentwidth):
         self.istep=[]
@@ -126,6 +131,27 @@ class Formatter:
 
         width = self.iwidth*' '
 
+        m = re.match(self.linecomment, line)
+        if m:
+            self.comment = 2
+            return (0, self.ilvl*width + line.strip())
+        else:
+            self.comment = max(0, self.comment-1)
+
+        m = re.match(self.matrixstart, line)
+        if m:
+            self.matrix = len(m.group(2))
+            return (0, self.ilvl*width + self.format(m.group(2)+m.group(3)).strip())
+
+        if self.matrix:
+            indent = (self.matrix + 1)*' '
+            m = re.match(self.matrixend, line)
+            if m:
+                self.matrix = 0
+                return (0, self.ilvl*width + indent+ self.format(m.group(2) + m.group(3)).strip())
+            else:
+                return (0, self.ilvl*width + indent + self.format(line).strip())
+
         m = re.match(self.ctrl_1line, line)
         if m:
             return (0, self.ilvl*width + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4))
@@ -182,7 +208,7 @@ class Formatter:
             self.ilvl += offset
 
             # add newline before block
-            if offset > 0 and not blank:
+            if offset > 0 and not blank and not self.comment:
                 wlines.append('')
 
             # add formatted line
