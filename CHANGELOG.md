@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.1.2
+Bugfix: add 'parfor' control sequence
+
 ### 2.1.1
 Improve matrix formatting
 
