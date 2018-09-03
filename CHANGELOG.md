@@ -1,8 +1,11 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.2.0
+Call python script relative from extension.js -> Remove now obsolete setting `path`
+
 ### 2.1.2
-Bugfix: add 'parfor' control sequence
+Bugfix: add `parfor` control sequence
 
 ### 2.1.1
 Improve matrix formatting

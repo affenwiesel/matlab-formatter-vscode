@@ -18,7 +18,6 @@ class MatlabFormatter {
     }
 
     formatDocument(document, range) {
-        // let name = document.fileName;
         return new Promise((resolve, reject) => {
             this.format(document, range).then((res) => {
                 return resolve(res);
@@ -29,14 +28,14 @@ class MatlabFormatter {
 
     format(document, range) {
         return new Promise((resolve, reject) => {
-            let formatter = this.py + vscode.workspace.getConfiguration('matlab-formatter')['path'];
+            let formatter = this.py + __dirname + "/formatter/matlab_formatter.py";
             let indentwidth = " --indentWidth=" + vscode.workspace.getConfiguration('matlab-formatter')['indentwidth'];
             let filename = ' "' + document.fileName + '"';
             let start = " --startLine=" + (range.start.line + 1);
             let end = " --endLine=" + (range.end.line + 1);
             cp.exec(formatter + filename + indentwidth + start + end, (err, stdout, stderr) => {
                 if (stdout != '') {
-                    let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line+1, 0));
+                    let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line + 1, 0));
                     var edit = [vscode.TextEdit.replace(toreplace, stdout)];
                     return resolve(edit);
                 }

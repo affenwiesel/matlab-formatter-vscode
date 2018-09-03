@@ -2,7 +2,7 @@
     "name": "matlab-formatter",
     "displayName": "matlab-formatter",
     "description": "format matlab code",
-    "version": "2.1.2",
+    "version": "2.2.0",
     "publisher": "AffenWiesel",
     "engines": {
         "vscode": "^1.20.0"
@@ -26,11 +26,6 @@
             "title": "Matlab-formatter configuration",
             "type": "object",
             "properties": {
-                "matlab-formatter.path": {
-                    "type": "string",
-                    "default": "%HOMEPATH%\\.vscode\\extensions\\matlab-formatter\\formatter\\matlab_formatter.py",
-                    "description": "absolute path to matlab_formatter.py"
-                },
                 "matlab-formatter.indentwidth": {
                     "type": "integer",
                     "default": 4,
