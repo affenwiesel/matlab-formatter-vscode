@@ -5,4 +5,8 @@ function test = myFun(a, b, c)
         test = a * i + b * i^2 + c * i^3;
     end
 
+    if condition
+        condition
+    end
+
 end

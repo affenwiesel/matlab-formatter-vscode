@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.2.1
+Remove trailing whitespaces at lineend
+
 ### 2.2.0
 Call python script relative from extension.js -> Remove now obsolete setting `path`
 
@@ -13,10 +16,10 @@ Improve matrix formatting
 ### 2.1.0
 * Feature: Add better formatting for matrices
 
-* Bugfix: Remove unwanted newlines after block-introducitng comment
+* Bugfix: Remove unwanted newlines after block-introducing comment
 
 ### 2.0.0
-Rewrite the formatter in an object oriented way to implement new features more easyly.
+Rewrite the formatter in an object oriented way to implement new features more easily.
 
 ### 1.2.1
 Bugfix: whitespace after string

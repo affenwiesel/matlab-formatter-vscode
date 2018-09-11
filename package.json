@@ -2,7 +2,7 @@
     "name": "matlab-formatter",
     "displayName": "matlab-formatter",
     "description": "format matlab code",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "publisher": "AffenWiesel",
     "engines": {
         "vscode": "^1.20.0"

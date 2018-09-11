@@ -212,7 +212,7 @@ class Formatter:
                 wlines.append('')
 
             # add formatted line
-            wlines.append(line)
+            wlines.append(line.rstrip())
 
             # add newline after block
             if offset < 0:
