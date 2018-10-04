@@ -31,6 +31,9 @@ class Formatter:
         m = re.match(r'(^|.*[\(\[\{,;=\+\s])\s*(\'[^\']*\')\s*([\)\}\],;].*|\s.*|$)', part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
+        m = re.match(r'(^|.*[\(\[\{,;=\+\s])\s*(\"[^\"]*\")\s*([\)\}\],;].*|\s.*|$)', part)
+        if m:
+            return (m.group(1), m.group(2), m.group(3))
 
         # comment
         m = re.match(r'(^|.*\S)\s*(%.*)', part)

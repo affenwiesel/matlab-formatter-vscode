@@ -28,7 +28,7 @@ class MatlabFormatter {
 
     format(document, range) {
         return new Promise((resolve, reject) => {
-            let formatter = this.py + __dirname + "/formatter/matlab_formatter.py";
+            let formatter = this.py +'"'+ __dirname + '/formatter/matlab_formatter.py"';
             let indentwidth = " --indentWidth=" + vscode.workspace.getConfiguration('matlab-formatter')['indentwidth'];
             let filename = ' "' + document.fileName + '"';
             let start = " --startLine=" + (range.start.line + 1);

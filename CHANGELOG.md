@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.2.2
+* bugfix: quoting of shell command
+* bugfix: implement formatting of doublequote-strings
+
 ### 2.2.1
 Remove trailing whitespaces at lineend
 
