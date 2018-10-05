@@ -9,6 +9,9 @@ function test = myFun(a, b, c)
         condition
     end
 
-    fprintf("Working on IRIS data set\n");
+
+    for()
+        fprintf("Working on IRIS data set\n");
+    end
 
 end

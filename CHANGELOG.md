@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.2.3
+bugfix: support braces after control keyword e.g. `if()`
+
 ### 2.2.2
 * bugfix: quoting of shell command
 * bugfix: implement formatting of doublequote-strings
