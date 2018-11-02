@@ -1,16 +1,13 @@
-function test = myFun(a, b, c)
-
-    parfor i = 1:100
-
-        test = a * i + b * i^2 + c * i^3;
-    end
-
-    if condition
-        condition
-    end
-
-    for ()
-        fprintf("Working on IRIS data set\n");
-    end
-
+function test=myFun(a,b,c)
+for k=1:10
+t=a*k...
++b*k^2...
++c*k^3
+if norm(t):
+fprintf('t>0')
+end
+end
+M=[1,2,3;
+4,5,6;
+7,8,9]
 end

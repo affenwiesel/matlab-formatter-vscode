@@ -2,7 +2,7 @@
 import re
 import sys
 import io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gbk')
 
 class Formatter:
     # control sequences
@@ -14,6 +14,7 @@ class Formatter:
     matrixstart = r'(^|\s*)(.*)(\[[^\]]*)(\s*$)'
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
+    ellipsis = r'.*\.\.\.\s*$'
 
     # indentation
     ilvl=0
@@ -21,6 +22,8 @@ class Formatter:
     iwidth=0
     matrix=0
     comment=0
+    longline=0
+    continueline=0
 
     def __init__(self, indentwidth):
         self.istep=[]
@@ -130,56 +133,64 @@ class Formatter:
             return self.format(m[0]) + m[1] + self.format(m[2])
         return part
 
+    # compute indentation
+    def indent(self, add=0):
+        return (self.ilvl+self.continueline+add)*self.iwidth*' '
+
     # take care of indentation and call format(line)
     def formatLine(self, line):
 
-        width = self.iwidth*' '
+        self.continueline = self.longline
+        if re.match(self.ellipsis, line):
+            self.longline = 1
+        else:
+            self.longline = 0
 
         m = re.match(self.linecomment, line)
         if m:
             self.comment = 2
-            return (0, self.ilvl*width + line.strip())
+            return (0, self.indent() + line.strip())
         else:
             self.comment = max(0, self.comment-1)
 
         m = re.match(self.matrixstart, line)
         if m:
-            self.matrix = len(m.group(2))
-            return (0, self.ilvl*width + self.format(m.group(2)+m.group(3)).strip())
+            self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
+            return (0, self.indent() + self.format(m.group(2)+m.group(3)).strip())
 
         if self.matrix:
-            indent = (self.matrix + 1)*' '
             m = re.match(self.matrixend, line)
             if m:
+                tmp = self.matrix
                 self.matrix = 0
-                return (0, self.ilvl*width + indent+ self.format(m.group(2) + m.group(3)).strip())
+                return (0, self.indent(tmp) + self.format(m.group(2) + m.group(3)).strip())
             else:
-                return (0, self.ilvl*width + indent + self.format(line).strip())
+                return (0, self.indent(self.matrix) + self.format(line).strip())
 
         m = re.match(self.ctrl_1line, line)
         if m:
-            return (0, self.ilvl*width + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4))
+            return (0, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4))
 
         m = re.match(self.ctrlstart, line)
         if m:
             self.istep.append(1)
-            return (1, self.ilvl*width + m.group(2) + ' ' + self.format(m.group(3)).strip())
+            return (1, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip())
 
         m = re.match(self.ctrlstart_2, line)
         if m:
             self.istep.append(2)
-            return (2, self.ilvl*width + m.group(2) + ' ' + self.format(m.group(3)).strip())
+            return (2, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip())
 
         m = re.match(self.ctrlcont, line)
         if m:
-            return (0, (self.ilvl-1)*width + m.group(2) + ' ' + self.format(m.group(3)).strip())
+            return (0, self.indent(-1) + m.group(2) + ' ' + self.format(m.group(3)).strip())
 
         m = re.match(self.ctrlend, line)
         if m:
             step = self.istep.pop()
-            return (-step, (self.ilvl-step)*width + m.group(2) + ' ' + self.format(m.group(3)).strip())
+            return (-step, self.indent(-step) + m.group(2) + ' ' + self.format(m.group(3)).strip())
 
-        return (0, self.ilvl*width + self.format(line).strip())
+        return (0, self.indent() + self.format(line).strip())
 
     # format file from line 'start' to line 'end'
     def formatFile(self, filename, start, end):

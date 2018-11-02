@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.4.0
+feature: Add indentation after linebreak (`...`)
+
 ### 2.3.0
 feature: Add support for object oriented Matlab code
 
