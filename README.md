@@ -1,6 +1,7 @@
 # matlab-formatter README
 
-matlab-formatter provides a python script to format matlab-code as well as the required VScode api
+Indent and format MATLAB code.
+Also usable as standalone without VScode.
 
 ![IMAGE](images/example.gif)
 

@@ -69,6 +69,11 @@ class Formatter:
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
+        # ellipsis
+        m = re.match(r'(^|.*\S)\s*(\.\.\.)\s*(\S.*|$)', part)
+        if m:
+            return (m.group(1) + ' ', m.group(2), m.group(3))
+
         # dot-operator-assignmet (e.g. .+=)
         m = re.match(r'(^|.*\S)\s*(\.)\s*(\+|\-|\*|/|\^)\s*(=)\s*(\S.*|$)', part)
         if m:
