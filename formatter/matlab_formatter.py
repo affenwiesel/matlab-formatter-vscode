@@ -2,7 +2,7 @@
 import re
 import sys
 import io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gbk')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 
 class Formatter:
     # control sequences
@@ -95,9 +95,9 @@ class Formatter:
             return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
 
         # not (~ or !)
-        # m = re.match(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)', part)
-        # if m:
-        #     return (m.group(1), m.group(2), m.group(3))
+        m = re.match(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)', part)
+        if m:
+            return (m.group(1), m.group(2), m.group(3))
 
         # single operator (e.g. +, -, etc.)
         m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&)\s*(\S.*|$)', part)

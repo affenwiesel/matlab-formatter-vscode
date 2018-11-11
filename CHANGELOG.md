@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.4.2
+bugfix: better support for chinese comments
+
 ### 2.4.0
 feature: Add indentation after linebreak (`...`)
 
