@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.4.3
+bugfix: undo changes from 2.4.2 because they lead to problems with other unicode-characters (e.g. greek letters)
+
 ### 2.4.2
 bugfix: better support for chinese comments
 
