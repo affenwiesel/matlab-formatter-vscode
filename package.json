@@ -2,7 +2,7 @@
     "name": "matlab-formatter",
     "displayName": "matlab-formatter",
     "description": "format matlab code",
-    "version": "2.4.3",
+    "version": "2.4.4",
     "publisher": "AffenWiesel",
     "engines": {
         "vscode": "^1.20.0"
@@ -57,5 +57,10 @@
         "eslint": "^4.11.0",
         "@types/node": "^7.0.43",
         "@types/mocha": "^2.2.42"
+    },
+    "__metadata": {
+        "id": "16f49f82-0071-4930-b6b5-b3e3ccd5fb0d",
+        "publisherDisplayName": "AffenWiesel",
+        "publisherId": "c3404b57-de97-47d7-8f81-b4955a94cc2e"
     }
 }

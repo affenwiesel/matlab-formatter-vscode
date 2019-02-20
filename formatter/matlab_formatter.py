@@ -11,7 +11,7 @@ class Formatter:
     ctrlstart_2 = r'(^|\s*)(switch)([\s\(]+\S.*|\s*$)'
     ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)([\s\(]+\S.*|\s*$)'
     ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
-    matrixstart = r'(^|\s*)(.*)(\[[^\]]*)(\s*$)'
+    matrixstart = r'(^|\s*)(\S.*)(\[[^\]]*)(\s*$)'
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
     ellipsis = r'.*\.\.\.\s*$'
