@@ -44,6 +44,11 @@ class Formatter:
         if m:
             return (m.group(1), m.group(2), '')
 
+        # non-comma-separated vector
+        m = re.match(r'(^|.*)\s*(\[[^\],;]*\])\s*(.*|\s.*|$)', part)
+        if m:
+            return (m.group(1), m.group(2), m.group(3))
+
         # decimal number (e.g. 5.6E-3)
         m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
         if m:
