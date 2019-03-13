@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.4.6
+bugfix: correct formatting of identifiers ending on decimal
+
 ### 2.4.5
 bugfix: exclude non-comma-separated vectors from formatting to prevent negative entries from being converted to subtractions
 

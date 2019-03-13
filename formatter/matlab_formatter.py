@@ -4,6 +4,7 @@ import sys
 import io
 # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 
+
 class Formatter:
     # control sequences
     ctrl_1line = r'(^|\s*)(if|while|for)([\s\(]+\S.*)(end|endif|endwhile|endfor)(\s*$)'
@@ -50,12 +51,12 @@ class Formatter:
             return (m.group(1), m.group(2), m.group(3))
 
         # decimal number (e.g. 5.6E-3)
-        m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
+        m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
         if m:
             return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
 
         # rational number (e.g. 1/4)
-        m = re.match(r'(^|.*[^\d\.]|.*\s)\s*(\d+\.?\d*)\s*(\/)\s*(\d+\.?\d*)\s*(\S.*|$)', part)
+        m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)\s*(\/)\s*(\d+\.?\d*)\s*(\S.*|$)', part)
         if m:
             return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
 
@@ -110,7 +111,7 @@ class Formatter:
             return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
 
         # function call
-        m = re.match(r'(.*[A-Za-z0-9_])\s*(\()\s*(\S.*|$)', part)
+        m = re.match(r'(.*\w)\s*(\()\s*(\S.*|$)', part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
