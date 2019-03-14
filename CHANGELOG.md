@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.4.7
+bugfix: remove additional spaces in rational numbers and scientific notation e.g 1/7 or 1.7e42
+
 ### 2.4.6
 bugfix: correct formatting of identifiers ending on decimal
 

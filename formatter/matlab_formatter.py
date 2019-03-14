@@ -53,12 +53,12 @@ class Formatter:
         # decimal number (e.g. 5.6E-3)
         m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
         if m:
-            return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
+            return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
         # rational number (e.g. 1/4)
-        m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)\s*(\/)\s*(\d+\.?\d*)\s*(\S.*|$)', part)
+        m = re.match(r'(^|.*\W)\s*(\d+)\s*(\/)\s*(\d+)\s*(\S.*|$)', part)
         if m:
-            return (m.group(1) + ' ' + m.group(2), m.group(3), m.group(4) + ' ' + m.group(5))
+            return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
         # signum (unary - or +)
         m = re.match(r'(^|.*[\(\[\{,;:=])\s*(\+|\-)\s*(\S.*|$)', part)

@@ -6,7 +6,8 @@ function foo = myFun(a, b, c)
     foo = -N * a(3) / N
     % TREAT POWERS AND RATIONAL NUMBERS AND NEGATIVES AS SINGLE EXPRESSION
     p = foo^N - 17
-    r = 1/17
+    r = 42/0.8e15
+    d = 4.7e11
     neg = -r
 
     for k = 1:N
