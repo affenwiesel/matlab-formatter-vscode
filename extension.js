@@ -6,7 +6,7 @@ const stream = require('stream');
 const os = require("os");
 var channel = null;
 const fullRange = doc => doc.validateRange(new vscode.Range(0, 0, Number.MAX_VALUE, Number.MAX_VALUE));
-const MODE = { language: 'matlab', scheme: 'file' };
+const MODE = { language: 'matlab' };
 
 class MatlabFormatter {
     constructor() {
@@ -58,14 +58,10 @@ class MatlabDocumentRangeFormatter {
         this.formatter = new MatlabFormatter();
     }
     provideDocumentFormattingEdits(document, options, token) {
-        return document.save().then(() => {
-            return this.formatter.formatDocument(document, fullRange(document));
-        });
+        return this.formatter.formatDocument(document, fullRange(document));
     }
     provideDocumentRangeFormattingEdits(document, range, options, token) {
-        return document.save().then(() => {
-            return this.formatter.formatDocument(document, range);
-        });
+        return this.formatter.formatDocument(document, range);
     }
 }
 
