@@ -39,7 +39,11 @@ class MatlabFormatter {
                     var edit = [vscode.TextEdit.replace(toreplace, stdout)];
                     return resolve(edit);
                 }
-                vscode.window.showErrorMessage('formatting failed')
+                if (stderr != '') {
+                    vscode.window.showErrorMessage('formatting error: '+stderr);
+                    return resolve(null);
+                }
+                vscode.window.showErrorMessage('formatting failed');
                 return resolve(null);
             });
         });
