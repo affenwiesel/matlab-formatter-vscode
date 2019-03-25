@@ -1,4 +1,4 @@
-% ADD CORRECT INDENTATION
+% ADD CORRECT INDENTATION κ
 function foo = myFun(a, b, c)
     % ADD SPACES BETWEEN EXPRESSIONS
     N = norm(a .* b - c)
