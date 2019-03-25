@@ -208,8 +208,12 @@ class Formatter:
 
         # read lines from file
         wlines = rlines = []
-        with open(filename, 'r') as f:
-            rlines = f.readlines()[start-1:end]
+        if filename == '-':
+            with sys.stdin as f:
+                rlines = f.readlines()[start-1:end]
+        else:
+            with open(filename, 'r') as f:
+                rlines = f.readlines()[start-1:end]
 
         # get initial indent lvl
         p = r'(\s*)(.*)'

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
 const cp = require("child_process");
+const stream = require('stream');
 const os = require("os");
 var channel = null;
 const fullRange = doc => doc.validateRange(new vscode.Range(0, 0, Number.MAX_VALUE, Number.MAX_VALUE));
@@ -30,10 +31,10 @@ class MatlabFormatter {
         return new Promise((resolve, reject) => {
             let formatter = this.py +'"'+ __dirname + '/formatter/matlab_formatter.py"';
             let indentwidth = " --indentWidth=" + vscode.workspace.getConfiguration('matlab-formatter')['indentwidth'];
-            let filename = ' "' + document.fileName + '"';
+            let filename = ' -';
             let start = " --startLine=" + (range.start.line + 1);
             let end = " --endLine=" + (range.end.line + 1);
-            cp.exec(formatter + filename + indentwidth + start + end, (err, stdout, stderr) => {
+            var p = cp.exec(formatter + filename + indentwidth + start + end, (err, stdout, stderr) => {
                 if (stdout != '') {
                     let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line + 1, 0));
                     var edit = [vscode.TextEdit.replace(toreplace, stdout)];
@@ -42,6 +43,10 @@ class MatlabFormatter {
                 vscode.window.showErrorMessage('formatting failed')
                 return resolve(null);
             });
+            var stdinStream = new stream.Readable();
+            stdinStream.push(document.getText());
+            stdinStream.push(null);
+            stdinStream.pipe(p.stdin);
         });
     }
 }
