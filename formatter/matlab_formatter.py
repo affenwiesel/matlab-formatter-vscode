@@ -3,6 +3,7 @@ import re
 import sys
 import io
 # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
+from chardet.universaldetector import UniversalDetector
 
 
 class Formatter:
@@ -205,10 +206,20 @@ class Formatter:
 
     # format file from line 'start' to line 'end'
     def formatFile(self, filename, start, end):
+        # guess file encoding
+        detector = UniversalDetector()
+        for line in open(filename, 'rb'):
+            detector.feed(line)
+            if detector.done: break
+        detector.close()
+        if detector.result['confidence'] < 0.95:
+            print('Cannot guess file encoding!', file=sys.stderr)
+            return
+        encoding = detector.result['encoding']
 
         # read lines from file
         wlines = rlines = []
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding=encoding) as f:
             rlines = f.readlines()[start-1:end]
 
         # get initial indent lvl
