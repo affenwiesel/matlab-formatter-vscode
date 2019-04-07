@@ -38,9 +38,12 @@ class MatlabFormatter {
                 if (stdout != '') {
                     let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line + 1, 0));
                     var edit = [vscode.TextEdit.replace(toreplace, stdout)];
+                    if (stderr != '') {
+                        vscode.window.showWarningMessage('formatting warning\n'+stderr);
+                    }
                     return resolve(edit);
                 }
-                vscode.window.showErrorMessage('formatting failed')
+                vscode.window.showErrorMessage('formatting failed\n'+stderr);
                 return resolve(null);
             });
             var stdinStream = new stream.Readable();
