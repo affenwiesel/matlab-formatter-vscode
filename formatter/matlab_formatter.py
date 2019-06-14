@@ -16,7 +16,7 @@ class Formatter:
     matrixstart = r'(^|\s*)(\S.*)(\[[^\]]*)(\s*$)'
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
-    ellipsis = r'.*\.\.\.\s*$'
+    ellipsis = r'[^%.]*\.\.\.\s*$'
 
     # indentation
     ilvl=0
