@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.4.9
+bugfix: correct formatting of unary minus
+
 ### 2.4.8
 bugfix: ignore ellipsis in comments
 

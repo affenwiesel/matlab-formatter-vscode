@@ -62,7 +62,7 @@ class Formatter:
             return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
         # signum (unary - or +)
-        m = re.match(r'(^|.*[\(\[\{,;:=])\s*(\+|\-)\s*(\S.*|$)', part)
+        m = re.match(r'(^|.*[\(\[\{,;:=\*/])\s*(\+|\-)\s*(\S.*|$)', part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
