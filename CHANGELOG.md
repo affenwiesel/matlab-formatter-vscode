@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.4.11
+bugfix: correct line break - again
+
+### 2.4.10
+bugfix: correct line break
+
 ### 2.4.9
 bugfix: correct formatting of unary minus
 

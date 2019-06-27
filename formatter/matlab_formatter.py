@@ -16,16 +16,17 @@ class Formatter:
     matrixstart = r'(^|\s*)(\S.*)(\[[^\]]*)(\s*$)'
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
-    ellipsis = r'[^%.]*\.\.\.\s*$'
+    ellipsis = r'.*\.\.\.\s*$'
 
     # indentation
     ilvl=0
     istep=0
     iwidth=0
     matrix=0
-    comment=0
+    islinecomment=0
     longline=0
     continueline=0
+    iscomment=0
 
     def __init__(self, indentwidth):
         self.istep=[]
@@ -44,6 +45,7 @@ class Formatter:
         # comment
         m = re.match(r'(^|.*\S)\s*(%.*)', part)
         if m:
+            self.iscomment=1
             return (m.group(1), m.group(2), '')
 
         # non-comma-separated vector
@@ -152,24 +154,29 @@ class Formatter:
     # take care of indentation and call format(line)
     def formatLine(self, line):
 
+        # find ellipsis
+        self.iscomment=0
+        self.format(line) # filter out ellipsis in comments
         self.continueline = self.longline
-        if re.match(self.ellipsis, line):
+        if not self.iscomment and re.match(self.ellipsis, line):
             self.longline = 1
         else:
             self.longline = 0
 
+        # find comments
         m = re.match(self.linecomment, line)
         if m:
-            self.comment = 2
+            self.islinecomment = 2
             return (0, self.indent() + line.strip())
         else:
-            self.comment = max(0, self.comment-1)
+            self.islinecomment = max(0, self.islinecomment-1)
 
         m = re.match(self.matrixstart, line)
         if m:
             self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
             return (0, self.indent() + self.format(m.group(2)+m.group(3)).strip())
 
+        # find matrices
         if self.matrix:
             m = re.match(self.matrixend, line)
             if m:
@@ -179,6 +186,7 @@ class Formatter:
             else:
                 return (0, self.indent(self.matrix) + self.format(line).strip())
 
+        # find control structures
         m = re.match(self.ctrl_1line, line)
         if m:
             return (0, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4))
@@ -246,7 +254,7 @@ class Formatter:
             self.ilvl += offset
 
             # add newline before block
-            if offset > 0 and not blank and not self.comment:
+            if offset > 0 and not blank and not self.islinecomment:
                 wlines.append('')
 
             # add formatted line

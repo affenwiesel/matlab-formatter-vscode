@@ -1,4 +1,4 @@
-% ADD CORRECT INDENTATION κ
+% ADD CORRECT INDENTATION
 function foo = myFun(a, b, c)
     % ADD SPACES BETWEEN EXPRESSIONS
     N = norm(a .* b - c)
@@ -13,7 +13,7 @@ function foo = myFun(a, b, c)
     for k = 1:N
         % ADD INDENTATION AFTER LINE BREAK
         t = a * k ...
-            +b * k^2 ...
+            +b .* k^2 ...
             +c * k^3
 
         if norm(t)% ADD NEWLINE BEFORE AND AFTER BLOCK
