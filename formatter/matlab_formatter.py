@@ -35,9 +35,9 @@ class Formatter:
     # divide string into three parts by extracting and formatting certain expressions
     def extract(self, part):
         # string
-        m = re.match(r'(^|.*[\(\[\{,;=\+\s])\s*(\'[^\']*\')\s*([\)\}\],;].*|\s.*|$)', part)
+        m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')\s*([\)\}\]\+\-,;].*|\s.*|$)', part)
         if m:
-            return (m.group(1), m.group(2), m.group(3))
+            return (m.group(1), m.group(2), m.group(4))
         m = re.match(r'(^|.*[\(\[\{,;=\+\s])\s*(\"[^\"]*\")\s*([\)\}\],;].*|\s.*|$)', part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
@@ -64,7 +64,7 @@ class Formatter:
             return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
         # signum (unary - or +)
-        m = re.match(r'(^|.*[\(\[\{,;:=\*/])\s*(\+|\-)\s*(\S.*|$)', part)
+        m = re.match(r'(^|.*[\(\[\{,;:=\*/])\s*(\+|\-)\s*(\S.*)', part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
@@ -156,7 +156,7 @@ class Formatter:
 
         # find ellipsis
         self.iscomment=0
-        self.format(line) # filter out ellipsis in comments
+        self.format(line)  # filter out ellipsis in comments
         self.continueline = self.longline
         if not self.iscomment and re.match(self.ellipsis, line):
             self.longline = 1
@@ -228,7 +228,7 @@ class Formatter:
         # read lines from file
         wlines = rlines = []
         # with open(filename, 'r', encoding=encoding) as f:
-        with open(filename, 'r' ) as f:
+        with open(filename, 'r') as f:
             rlines = f.readlines()[start-1:end]
 
         # get initial indent lvl

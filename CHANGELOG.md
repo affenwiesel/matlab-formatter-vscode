@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.4.12
+bugfix: correct formatting for strings containing quotes
+
 ### 2.4.11
 bugfix: correct line break - again
 
