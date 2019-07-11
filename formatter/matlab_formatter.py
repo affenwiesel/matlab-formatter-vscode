@@ -1,4 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+# Python 2 and 3:
+from __future__ import print_function    # (at top of module)
+
 import re
 import sys
 import io
