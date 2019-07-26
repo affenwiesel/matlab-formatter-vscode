@@ -224,12 +224,22 @@ class Formatter:
         #     print('Cannot guess file encoding!', file=sys.stderr)
         #     return
         # encoding = detector.result['encoding']
+        import chardet
+        with open(filename, 'rb') as f:
+            data = f.read()
+            char_info = chardet.detect(data)
+            if char_info['confidence'] < 0.95:
+                # print('Cannot guess file encoding!', file=sys.stderr)
+                # return
+                encoding = None
+            else:
+                encoding = char_info['encoding']
 
         # read lines from file
         wlines = rlines = []
-        # with open(filename, 'r', encoding=encoding) as f:
-        with open(filename, 'r') as f:
-            rlines = f.readlines()[start-1:end]
+        with open(filename, 'r', encoding=encoding) as f:
+        # with open(filename, 'r') as f:
+            rlines = f.readlines()[start - 1:end]
 
         # get initial indent lvl
         p = r'(\s*)(.*)'
