@@ -8,44 +8,46 @@ import io
 
 class Formatter:
     # control sequences
-    ctrl_1line = r'(^|\s*)(if|while|for)([\s\(]+\S.*)(end|endif|endwhile|endfor)(\s*$)'
+    ctrl_1line = r'(^|\s*)(if|while|for)([\s\(]+\S.*)((^|\s+)(end|endif|endwhile|endfor))(\s*$)'
     ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events)([\s\(]+\S.*|\s*$)'
     ctrlstart_2 = r'(^|\s*)(switch)([\s\(]+\S.*|\s*$)'
     ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)([\s\(]+\S.*|\s*$)'
-    ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
+    ctrlend = r'(^|\s+)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|$)'
     matrixstart = r'(^|\s*)(\S.*)(\[[^\]]*)(\s*$)'
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
     ellipsis = r'.*\.\.\.\s*$'
 
     # indentation
-    ilvl=0
-    istep=0
-    iwidth=0
-    matrix=0
-    islinecomment=0
-    longline=0
-    continueline=0
-    iscomment=0
+    ilvl = 0
+    istep = 0
+    iwidth = 0
+    matrix = 0
+    islinecomment = 0
+    longline = 0
+    continueline = 0
+    iscomment = 0
 
     def __init__(self, indentwidth):
-        self.istep=[]
-        self.iwidth=indentwidth
+        self.istep = []
+        self.iwidth = indentwidth
 
     # divide string into three parts by extracting and formatting certain expressions
     def extract(self, part):
         # string
-        m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')\s*([\)\}\]\+\-,;].*|\s.*|$)', part)
+        m = re.match(
+            r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')\s*([\)\}\]\+\-,;].*|\s.*|$)', part)
         if m:
             return (m.group(1), m.group(2), m.group(4))
-        m = re.match(r'(^|.*[\(\[\{,;=\+\s])\s*(\"[^\"]*\")\s*([\)\}\],;].*|\s.*|$)', part)
+        m = re.match(
+            r'(^|.*[\(\[\{,;=\+\s])\s*(\"[^\"]*\")\s*([\)\}\],;].*|\s.*|$)', part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # comment
         m = re.match(r'(^|.*\S)\s*(%.*)', part)
         if m:
-            self.iscomment=1
+            self.iscomment = 1
             return (m.group(1), m.group(2), '')
 
         # non-comma-separated vector
@@ -54,7 +56,8 @@ class Formatter:
             return (m.group(1), m.group(2), m.group(3))
 
         # decimal number (e.g. 5.6E-3)
-        m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
+        m = re.match(
+            r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
         if m:
             return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
@@ -84,7 +87,8 @@ class Formatter:
             return (m.group(1) + ' ', m.group(2), m.group(3))
 
         # dot-operator-assignmet (e.g. .+=)
-        m = re.match(r'(^|.*\S)\s*(\.)\s*(\+|\-|\*|/|\^)\s*(=)\s*(\S.*|$)', part)
+        m = re.match(
+            r'(^|.*\S)\s*(\.)\s*(\+|\-|\*|/|\^)\s*(=)\s*(\S.*|$)', part)
         if m:
             return (m.group(1) + ' ', m.group(2) + m.group(3) + m.group(4), ' ' + m.group(5))
 
@@ -99,7 +103,8 @@ class Formatter:
             return (m.group(1), m.group(2), m.group(3))
 
         # combined operator (e.g. +=, .+, etc.)
-        m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~|\^)\s*(<|>|=|\+|\-|\*|/|\&|\|)\s*(\S.*|$)', part)
+        m = re.match(
+            r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~|\^)\s*(<|>|=|\+|\-|\*|/|\&|\|)\s*(\S.*|$)', part)
         if m:
             return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
 
@@ -109,7 +114,8 @@ class Formatter:
             return (m.group(1), m.group(2), m.group(3))
 
         # single operator (e.g. +, -, etc.)
-        m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&)\s*(\S.*|$)', part)
+        m = re.match(
+            r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&)\s*(\S.*|$)', part)
         if m:
             return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
 
@@ -155,7 +161,7 @@ class Formatter:
     def formatLine(self, line):
 
         # find ellipsis
-        self.iscomment=0
+        self.iscomment = 0
         self.format(line)  # filter out ellipsis in comments
         self.continueline = self.longline
         if not self.iscomment and re.match(self.ellipsis, line):
@@ -173,7 +179,8 @@ class Formatter:
 
         m = re.match(self.matrixstart, line)
         if m:
-            self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
+            self.matrix = int(
+                max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
             return (0, self.indent() + self.format(m.group(2)+m.group(3)).strip())
 
         # find matrices
@@ -280,7 +287,8 @@ def main():
     options = {'--startLine': 1, '--endLine': None, '--indentWidth': 4}
 
     if len(sys.argv) < 2:
-        print('usage: matlab_formatter.py filename [options...]\n  OPTIONS:\n    --startLine=\\d\n    --endLine=\\d\n    --indentWidth=\\d\n', file=sys.stderr)
+        print(
+            'usage: matlab_formatter.py filename [options...]\n  OPTIONS:\n    --startLine=\\d\n    --endLine=\\d\n    --indentWidth=\\d\n', file=sys.stderr)
     else:
         for arg in sys.argv[2:]:
             key, value = arg.split('=')
@@ -295,6 +303,7 @@ def main():
 
         formatter = Formatter(indent)
         formatter.formatFile(sys.argv[1], start, end)
+
 
 if __name__ == '__main__':
     main()
