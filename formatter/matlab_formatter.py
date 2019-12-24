@@ -13,7 +13,7 @@ class Formatter:
     ctrlstart_2 = r'(^|\s*)(switch)([\s\(]+\S.*|\s*$)'
     ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)([\s\(]+\S.*|\s*$)'
     ctrlend = r'(^|\s+)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|$)'
-    matrixstart = r'(^|\s*)(\S.*)(\[[^\]]*)(\s*$)'
+    matrixstart = r'w(\S.*)(\[[^\]]*)(\s*$)'
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
     ellipsis = r'.*\.\.\.\s*$'
@@ -54,6 +54,11 @@ class Formatter:
         m = re.match(r'(^|.*)\s*(\[[^\],;]*\])\s*(.*|\s.*|$)', part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
+
+        # non-comma-separated matrix
+        m = re.match(r'(^|.*)\s*\[(.*;.*)*\]\s*(.*|\s.*|$)', part)
+        if m:
+            return (m.group(1), '[ ' + m.group(2) + ' ]', m.group(3))
 
         # decimal number (e.g. 5.6E-3)
         m = re.match(
