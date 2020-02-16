@@ -9,10 +9,10 @@ import io
 class Formatter:
     # control sequences
     ctrl_1line = r'(^|\s*)(if|while|for)([\s\(]+\S.*)(end|endif|endwhile|endfor)(\s*$)'
-    ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events)([\s\(]+\S.*|\s*$)'
+    ctrlstart = r'(^|\s*)(if|while|for|parfor|try|classdef|methods|properties|events)([\s\(]+\S.*|\s*$)'
     ctrlstart_2 = r'(^|\s*)(switch)([\s\(]+\S.*|\s*$)'
     ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)([\s\(]+\S.*|\s*$)'
-    ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
+    ctrlend = r'(^|\s*)(end|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
     matrixstart = r'(^|\s*)(\S.*)(\[[^\]]*)(\s*$)'
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
@@ -207,7 +207,10 @@ class Formatter:
 
         m = re.match(self.ctrlend, line)
         if m:
-            step = self.istep.pop()
+            if len(self.istep) == 0:
+                step = 0
+            else:
+                step = self.istep.pop()
             return (-step, self.indent(-step) + m.group(2) + ' ' + self.format(m.group(3)).strip())
 
         return (0, self.indent() + self.format(line).strip())
