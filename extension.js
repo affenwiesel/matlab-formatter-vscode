@@ -57,14 +57,12 @@ class MatlabDocumentRangeFormatter {
         this.formatter = new MatlabFormatter();
     }
     provideDocumentFormattingEdits(document, options, token) {
-        return document.save().then(() => {
-            return this.formatter.formatDocument(document, fullRange(document));
-        });
+        return this.provideDocumentRangeFormattingEdits(document, fullRange(document), options, token)
     }
-    provideDocumentRangeFormattingEdits(document, range, options, token) {
-        return document.save().then(() => {
-            return this.formatter.formatDocument(document, range);
-        });
+
+    async provideDocumentRangeFormattingEdits(document, range, options, token) {
+        const edits = await this.formatter.formatDocument(document, range)
+        return edits
     }
 }
 
