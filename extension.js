@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
 const cp = require("child_process");
+const stream = require('stream');
 const os = require("os");
 var channel = null;
 const fullRange = doc => doc.validateRange(new vscode.Range(0, 0, Number.MAX_VALUE, Number.MAX_VALUE));
-const MODE = { language: 'matlab', scheme: 'file' };
+const MODE = { language: 'matlab' };
 
 class MatlabFormatter {
     constructor() {
@@ -30,22 +31,25 @@ class MatlabFormatter {
         return new Promise((resolve, reject) => {
             let formatter = this.py +'"'+ __dirname + '/formatter/matlab_formatter.py"';
             let indentwidth = " --indentWidth=" + vscode.workspace.getConfiguration('matlab-formatter')['indentwidth'];
-            let filename = ' "' + document.fileName + '"';
+            let filename = ' -';
             let start = " --startLine=" + (range.start.line + 1);
             let end = " --endLine=" + (range.end.line + 1);
-            cp.exec(formatter + filename + indentwidth + start + end, (err, stdout, stderr) => {
+            var p = cp.exec(formatter + filename + indentwidth + start + end, (err, stdout, stderr) => {
                 if (stdout != '') {
                     let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line + 1, 0));
                     var edit = [vscode.TextEdit.replace(toreplace, stdout)];
+                    if (stderr != '') {
+                        vscode.window.showWarningMessage('formatting warning\n'+stderr);
+                    }
                     return resolve(edit);
                 }
-                if (stderr != '') {
-                    vscode.window.showErrorMessage('formatting error: '+stderr);
-                    return resolve(null);
-                }
-                vscode.window.showErrorMessage('formatting failed');
+                vscode.window.showErrorMessage('formatting failed\n'+stderr);
                 return resolve(null);
             });
+            var stdinStream = new stream.Readable();
+            stdinStream.push(document.getText());
+            stdinStream.push(null);
+            stdinStream.pipe(p.stdin);
         });
     }
 }
@@ -57,14 +61,10 @@ class MatlabDocumentRangeFormatter {
         this.formatter = new MatlabFormatter();
     }
     provideDocumentFormattingEdits(document, options, token) {
-        return document.save().then(() => {
-            return this.formatter.formatDocument(document, fullRange(document));
-        });
+        return this.formatter.formatDocument(document, fullRange(document));
     }
     provideDocumentRangeFormattingEdits(document, range, options, token) {
-        return document.save().then(() => {
-            return this.formatter.formatDocument(document, range);
-        });
+        return this.formatter.formatDocument(document, range);
     }
 }
 
