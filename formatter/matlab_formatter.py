@@ -34,6 +34,11 @@ class Formatter:
 
     # divide string into three parts by extracting and formatting certain expressions
     def extract(self, part):
+        # important space
+        m = re.match(r"(.*[\)\}\]\'\w])(\s+)([\(\[\{\'%\w].*)", part)
+        if m:
+            return (m.group(1), m.group(2), m.group(3))
+
         # string
         m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')\s*([\)\}\]\+\-,;].*|\s.*|$)', part)
         if m:

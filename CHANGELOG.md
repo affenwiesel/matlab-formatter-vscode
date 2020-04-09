@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.5.1
+bugfix: keep spaces between expressions
+
 ### 2.5.0
 feature: pipe python error to vs-code error message (credits to AlexanderLieret)
 add support for utf-8 (credits to wuyudi)
