@@ -8,10 +8,10 @@ import io
 
 class Formatter:
     # control sequences
-    ctrl_1line = r'(^|\s*)(if|while|for)([\s\(]+\S.*)(end|endif|endwhile|endfor)(\s*$)'
-    ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events)([\s\(]+\S.*|\s*$)'
-    ctrlstart_2 = r'(^|\s*)(switch)([\s\(]+\S.*|\s*$)'
-    ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)([\s\(]+\S.*|\s*$)'
+    ctrl_1line = r'(^|\s*)(if|while|for)(\W\S.*\W)(end|endif|endwhile|endfor)(\s*$)'
+    ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events)(\W\S.*|\s*$)'
+    ctrlstart_2 = r'(^|\s*)(switch)(\W\S.*|\s*$)'
+    ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)(\W\S.*|\s*$)'
     ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
     matrixstart = r'(^|\s*)(\S.*)(\[[^\]]*)(\s*$)'
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
