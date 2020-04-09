@@ -2,7 +2,7 @@
 import re
 import sys
 import io
-# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 # from chardet.universaldetector import UniversalDetector
 
 
@@ -228,7 +228,8 @@ class Formatter:
             with sys.stdin as f:
                 rlines = f.readlines()[start-1:end]
         else:
-            with open(filename, 'r') as f:
+            # with open(filename, 'r') as f:
+            with open(filename, 'r', encoding='UTF-8') as f:
                 rlines = f.readlines()[start-1:end]
 
         # get initial indent lvl
