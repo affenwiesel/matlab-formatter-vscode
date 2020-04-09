@@ -48,11 +48,6 @@ class Formatter:
             self.iscomment=1
             return (m.group(1), m.group(2), '')
 
-        # non-comma-separated vector
-        m = re.match(r'(^|.*)\s*(\[[^\],;]*\])\s*(.*|\s.*|$)', part)
-        if m:
-            return (m.group(1), m.group(2), m.group(3))
-
         # decimal number (e.g. 5.6E-3)
         m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
         if m:
@@ -64,7 +59,7 @@ class Formatter:
             return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
         # signum (unary - or +)
-        m = re.match(r'(^|.*[\(\[\{,;:=\*/])\s*(\+|\-)\s*(\S.*)', part)
+        m = re.match(r'(^|.*[\(\[\{,;:=\*/ ])\s*(\+|\-)(\S.*)', part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
@@ -227,6 +222,8 @@ class Formatter:
 
         # read lines from file
         wlines = rlines = []
+        # with open(filename, 'r', encoding=encoding) as f:
+
         if filename == '-':
             with sys.stdin as f:
                 rlines = f.readlines()[start-1:end]
