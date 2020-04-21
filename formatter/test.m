@@ -16,8 +16,10 @@ function foo = myFun(a, b, c)
             + b .* k^2 ...
             + c * k^3
 
+        vectorofstrings = ['α' 'β' 'γ'];
+
         if (norm(t))% ADD NEWLINE BEFORE AND AFTER BLOCK
-            fprintf('t>0')
+            fprintf('Hello world \n');
         end
 
     end

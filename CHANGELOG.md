@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.5.2
+bugfix: yet another attempt to fix all the spaces between expressions
+
 ### 2.5.1
 bugfix: keep spaces between expressions
 

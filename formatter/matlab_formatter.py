@@ -2,7 +2,7 @@
 import re
 import sys
 import io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
 # from chardet.universaldetector import UniversalDetector
 
 
@@ -34,24 +34,24 @@ class Formatter:
 
     # divide string into three parts by extracting and formatting certain expressions
     def extract(self, part):
-        # important space
-        m = re.match(r"(.*[\)\}\]\'\w])(\s+)([\(\[\{\'%\w].*)", part)
-        if m:
-            return (m.group(1), m.group(2), m.group(3))
-
         # string
-        m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')\s*([\)\}\]\+\-,;].*|\s.*|$)', part)
+        m = re.match(r'(^|.*[\(\[\{,;=\+\-])(\s?)\s*(\'([^\']|\'\')+\')\s*([\)\}\]\+\-,;].*|\s.*|$)', part)
         if m:
-            return (m.group(1), m.group(2), m.group(4))
-        m = re.match(r'(^|.*[\(\[\{,;=\+\s])\s*(\"[^\"]*\")\s*([\)\}\],;].*|\s.*|$)', part)
+            return (m.group(1), m.group(2) + m.group(3), m.group(5))
+        m = re.match(r'(^|.*[\(\[\{,;=\+])(\s?)\s*(\"[^\"]*\")\s*([\)\}\],;].*|\s.*|$)', part)
         if m:
-            return (m.group(1), m.group(2), m.group(3))
+            return (m.group(1), m.group(2) + m.group(3), m.group(4))
 
         # comment
         m = re.match(r'(^|.*\S)\s*(%.*)', part)
         if m:
             self.iscomment=1
             return (m.group(1), m.group(2), '')
+
+        # important space
+        m = re.match(r"(.*[\)\}\]\'\w])(\s+)([\(\[\{\'%\w].*)", part)
+        if m:
+            return (m.group(1), ' ', m.group(3))
 
         # decimal number (e.g. 5.6E-3)
         m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
