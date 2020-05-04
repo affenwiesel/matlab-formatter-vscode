@@ -27,31 +27,33 @@ class Formatter:
     longline=0
     continueline=0
     iscomment=0
+    separateBlocks=False
 
-    def __init__(self, indentwidth):
+    def __init__(self, indentwidth, separateBlocks):
         self.istep=[]
         self.iwidth=indentwidth
+        self.separateBlocks=separateBlocks
 
     # divide string into three parts by extracting and formatting certain expressions
     def extract(self, part):
+        # whitespace only
+        m = re.match(r'^\s+$', part)
+        if m:
+            return ('', ' ', '')
+
         # string
-        m = re.match(r'(^|.*[\(\[\{,;=\+\-])(\s?)\s*(\'([^\']|\'\')+\')\s*([\)\}\]\+\-,;].*|\s.*|$)', part)
+        m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)', part)
         if m:
-            return (m.group(1), m.group(2) + m.group(3), m.group(5))
-        m = re.match(r'(^|.*[\(\[\{,;=\+])(\s?)\s*(\"[^\"]*\")\s*([\)\}\],;].*|\s.*|$)', part)
+            return (m.group(1), m.group(2), m.group(4))
+        m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\"[^\"]*\")([\)\}\]\+\-,;].*|\s+.*|$)', part)
         if m:
-            return (m.group(1), m.group(2) + m.group(3), m.group(4))
+            return (m.group(1), m.group(2), m.group(3))
 
         # comment
         m = re.match(r'(^|.*\S)\s*(%.*)', part)
         if m:
             self.iscomment=1
             return (m.group(1), m.group(2), '')
-
-        # important space
-        m = re.match(r"(.*[\)\}\]\'\w])(\s+)([\(\[\{\'%\w].*)", part)
-        if m:
-            return (m.group(1), ' ', m.group(3))
 
         # decimal number (e.g. 5.6E-3)
         m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
@@ -63,15 +65,15 @@ class Formatter:
         if m:
             return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
-        # signum (unary - or +)
-        m = re.match(r'(^|.*[\(\[\{,;:=\*/ ])\s*(\+|\-)(\S.*)', part)
-        if m:
-            return (m.group(1), m.group(2), m.group(3))
-
         # incrementor (++ or --)
         m = re.match(r'(^|.*\S)\s*(\+|\-)\s*(\+|\-)\s*([\)\]\},;].*|$)', part)
         if m:
             return (m.group(1), m.group(2) + m.group(3), m.group(4))
+
+        # signum (unary - or +)
+        m = re.match(r'(.*[\(\[\{,;:=\*/\s])\s*(\+|\-)(\S.*)', part)
+        if m:
+            return (m.group(1), m.group(2), m.group(3))
 
         # colon
         m = re.match(r'(^|.*\S)\s*(:)\s*(\S.*|$)', part)
@@ -214,26 +216,13 @@ class Formatter:
 
     # format file from line 'start' to line 'end'
     def formatFile(self, filename, start, end):
-        # guess file encoding
-        # detector = UniversalDetector()
-        # for line in open(filename, 'rb'):
-        #     detector.feed(line)
-        #     if detector.done: break
-        # detector.close()
-        # if detector.result['confidence'] < 0.95:
-        #     print('Cannot guess file encoding!', file=sys.stderr)
-        #     return
-        # encoding = detector.result['encoding']
-
         # read lines from file
         wlines = rlines = []
-        # with open(filename, 'r', encoding=encoding) as f:
 
         if filename == '-':
             with sys.stdin as f:
                 rlines = f.readlines()[start-1:end]
         else:
-            # with open(filename, 'r') as f:
             with open(filename, 'r', encoding='UTF-8') as f:
                 rlines = f.readlines()[start-1:end]
 
@@ -260,16 +249,16 @@ class Formatter:
             self.ilvl += offset
 
             # add newline before block
-            if offset > 0 and not blank and not self.islinecomment:
+            if self.separateBlocks and offset > 0 and not blank and not self.islinecomment:
                 wlines.append('')
 
             # add formatted line
             wlines.append(line.rstrip())
 
             # add newline after block
-            if offset < 0:
-                wlines.append('')
-                blank = True
+            if self.separateBlocks and offset < 0:
+                    wlines.append('')
+                    blank = True
             else:
                 blank = False
 
@@ -283,23 +272,31 @@ class Formatter:
 
 
 def main():
-    options = {'--startLine': 1, '--endLine': None, '--indentWidth': 4}
+    options = {'--startLine': 1, '--endLine': None, '--indentWidth': 4, '--separateBlocks': True}
 
     if len(sys.argv) < 2:
-        print('usage: matlab_formatter.py filename [options...]\n  OPTIONS:\n    --startLine=\\d\n    --endLine=\\d\n    --indentWidth=\\d\n', file=sys.stderr)
+        usage   = 'usage: matlab_formatter.py filename [options...]\n'
+        opt     = '  OPTIONS:\n'
+        for key in options:
+            val = options[key]
+            opt += '    %s=%s\n' %(key,re.match(r'\<class \'(.*)\'\>', str(type(val))).group(1).replace('NoneType','int'))
+
+        print('%s%s' %(usage,opt), file=sys.stderr)
+
     else:
         for arg in sys.argv[2:]:
             key, value = arg.split('=')
             try:
-                value = eval(value)
+                value = eval(value.replace('f','F').replace('t','T'))
             finally:
                 options[key.strip()] = value
 
         indent = options['--indentWidth']
         start = options['--startLine']
         end = options['--endLine']
+        sep = options['--separateBlocks']
 
-        formatter = Formatter(indent)
+        formatter = Formatter(indent, sep)
         formatter.formatFile(sys.argv[1], start, end)
 
 if __name__ == '__main__':

@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+
+### 2.6.0
+features:
+* option to set custom python path
+* option to choose whether (for/if/...) blocks shall be wrapped with empty lines
+
+bugfix: whitespaces (yet again)
+
 ### 2.5.2
 bugfix: yet another attempt to fix all the spaces between expressions
 
@@ -8,10 +16,13 @@ bugfix: yet another attempt to fix all the spaces between expressions
 bugfix: keep spaces between expressions
 
 ### 2.5.0
-feature: pipe python error to vs-code error message (credits to AlexanderLieret)
-add support for utf-8 (credits to wuyudi)
-bugfix: correct handling of non-comma-separated vectors and matrices
-bugfix: correct treatment of identifiers with names containing 'end'
+features:
+* pipe python error to vs-code error message (credits to AlexanderLieret)
+* add support for utf-8 (credits to wuyudi)
+
+bugfixes:
+* correct handling of non-comma-separated vectors and matrices
+* correct treatment of identifiers with names containing 'end'
 
 ### 2.4.12
 bugfix: correct formatting for strings containing quotes

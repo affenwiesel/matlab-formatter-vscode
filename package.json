@@ -2,7 +2,7 @@
     "name": "matlab-formatter",
     "displayName": "matlab-formatter",
     "description": "format matlab code",
-    "version": "2.5.2",
+    "version": "2.6.0",
     "publisher": "AffenWiesel",
     "engines": {
         "vscode": "^1.20.0"
@@ -31,6 +31,16 @@
                     "type": "integer",
                     "default": 4,
                     "description": "number of spaces used for indentation"
+                },
+                "matlab-formatter.separateBlocks": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "add newlines before and after blocks (for, if, etc.)"
+                },
+                "matlab-formatter.pythonPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "optional custom path to python executable (requires restarting vscode)"
                 }
             }
         },

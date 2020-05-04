@@ -9,4 +9,6 @@ Also usable as standalone without VScode.
 - python 3
 
 ## Extension Settings
-* `matlab-formatter.indentwidth`: number of spaces used for indentation
+* `matlab-formatter.indentwidth`: Number of spaces used for indentation.
+* `matlab-formatter.separateBlocks`: Control whether newlines should be added before and after blocks such as for, if, while and so on.
+* `matlab-formatter.pythonPath`: Optional custom path to python executable. Setting this options requires restarting vscode.

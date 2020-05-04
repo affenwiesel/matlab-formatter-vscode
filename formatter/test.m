@@ -12,11 +12,14 @@ function foo = myFun(a, b, c)
 
     for k = 1:N
         % ADD INDENTATION AFTER LINE BREAK
+        k++
+
         t = a * k ...
             + b .* k^2 ...
             + c * k^3
-
         vectorofstrings = ['α' 'β' 'γ'];
+        vectorofstrings = ['α', 'β', 'γ'];
+        vectorofstuff = ['foo' -dead('beef', 3.14, bar) -foo('bar', '42')]
 
         if (norm(t))% ADD NEWLINE BEFORE AND AFTER BLOCK
             fprintf('Hello world \n');
@@ -27,7 +30,7 @@ function foo = myFun(a, b, c)
     % INDENT MATRICES SPLIT OVER MULTIPLE LINES
     M = [1 -2 3;
         4 5 -6;
-        -7 8 9]% REMOVE ADDITIONAL NEWLINES
+        - 7 8 9]% REMOVE ADDITIONAL NEWLINES
 
     even_more = code
 end
