@@ -1,6 +1,7 @@
 # Change Log
-All notable changes to the "matlab-formatter" extension will be documented in this file.
 
+### 2.7.0
+add support for arguments and enumeration
 
 ### 2.6.0
 features:
