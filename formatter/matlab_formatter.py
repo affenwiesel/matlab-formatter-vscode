@@ -9,7 +9,7 @@ import io
 class Formatter:
     # control sequences
     ctrl_1line = r'(^|\s*)(if|while|for)(\W\S.*\W)(end|endif|endwhile|endfor)(\s*$)'
-    ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events)(\W\S.*|\s*$)'
+    ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events|arguments)(\W\S.*|\s*$)'
     ctrlstart_2 = r'(^|\s*)(switch)(\W\S.*|\s*$)'
     ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)(\W\S.*|\s*$)'
     ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
