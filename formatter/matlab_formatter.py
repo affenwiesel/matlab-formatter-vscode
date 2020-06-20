@@ -17,6 +17,7 @@ class Formatter:
     matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
     ellipsis = r'.*\.\.\.\s*$'
+    importcmd = r'(^|\s*)(import .*)'
 
     # indentation
     ilvl=0
@@ -173,12 +174,17 @@ class Formatter:
         else:
             self.islinecomment = max(0, self.islinecomment-1)
 
+        # find imports
+        m = re.match(self.importcmd, line)
+        if m:
+            return (0,self.indent() + m.group(2).strip())
+
+        # find matrices
         m = re.match(self.matrixstart, line)
         if m:
             self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
             return (0, self.indent() + self.format(m.group(2)+m.group(3)).strip())
 
-        # find matrices
         if self.matrix:
             m = re.match(self.matrixend, line)
             if m:

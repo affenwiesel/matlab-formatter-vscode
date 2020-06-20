@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.7.1
+bugfix: fix formatting issues with imports
+
 ### 2.7.0
 add support for arguments and enumeration
 

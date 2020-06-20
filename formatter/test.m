@@ -1,6 +1,8 @@
+import util.*
 % ADD CORRECT INDENTATION
 function foo = myFun(a, b, c)
     % ADD SPACES BETWEEN EXPRESSIONS
+
     N = norm(a .* b - c)
     % REMOVE ADDITIONAL SPACES
     foo = -N * a(3) / N
