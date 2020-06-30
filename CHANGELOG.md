@@ -1,5 +1,12 @@
 # Change Log
 
+### 2.8.0
+features:
+* option to set custom path for formatter
+* support multiline cell arrays
+
+bugfix: error with multiple spaces after for/if/etc.
+
 ### 2.7.1
 bugfix: fix formatting issues with imports
 

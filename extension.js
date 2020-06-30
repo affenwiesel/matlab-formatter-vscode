@@ -16,6 +16,10 @@ class MatlabFormatter {
         if (this.py == '' && this.machine_os == 'win32') {
             this.py = 'python ';
         }
+        this.formatter = vscode.workspace.getConfiguration('matlab-formatter')['formatterPath'];
+        if (this.formatter == '') {
+            this.formatter = '"'+ __dirname + '/formatter/matlab_formatter.py"';
+        }
     }
 
     formatDocument(document, range) {
@@ -29,13 +33,13 @@ class MatlabFormatter {
 
     format(document, range) {
         return new Promise((resolve, reject) => {
-            let formatter = this.py +'"'+ __dirname + '/formatter/matlab_formatter.py"';
+            // let formatter = this.py +'"'+ __dirname + '/formatter/matlab_formatter.py"';
             let indentwidth = " --indentWidth=" + vscode.workspace.getConfiguration('matlab-formatter')['indentwidth'];
             let separateBlocks = " --separateBlocks=" + vscode.workspace.getConfiguration('matlab-formatter')['separateBlocks'];
             let filename = ' -';
             let start = " --startLine=" + (range.start.line + 1);
             let end = " --endLine=" + (range.end.line + 1);
-            var p = cp.exec(formatter + filename + indentwidth + separateBlocks + start + end, (err, stdout, stderr) => {
+            var p = cp.exec(this.py + this.formatter + filename + indentwidth + separateBlocks + start + end, (err, stdout, stderr) => {
                 if (stdout != '') {
                     let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line + 1, 0));
                     var edit = [vscode.TextEdit.replace(toreplace, stdout)];

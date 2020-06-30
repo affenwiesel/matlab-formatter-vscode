@@ -1,29 +1,42 @@
 #!/usr/bin/env python3
 import re
 import sys
-import io
-# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
-# from chardet.universaldetector import UniversalDetector
-
 
 class Formatter:
     # control sequences
     ctrl_1line = r'(^|\s*)(if|while|for)(\W\S.*\W)(end|endif|endwhile|endfor)(\s*$)'
-    ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)(\W\S.*|\s*$)'
-    ctrlstart_2 = r'(^|\s*)(switch)(\W\S.*|\s*$)'
-    ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)(\W\S.*|\s*$)'
+    ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\S.*|\s*$)'
+    ctrlstart_2 = r'(^|\s*)(switch)\s*(\W\S.*|\s*$)'
+    ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)\s*(\W\S.*|\s*$)'
     ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
-    matrixstart = r'(^|\s*)(\S.*)(\[[^\]]*)(\s*$)'
-    matrixend = r'(^|\s*)(.*)(\].*)(\s*$)'
     linecomment = r'(^|\s*)%.*$'
     ellipsis = r'.*\.\.\.\s*$'
     importcmd = r'(^|\s*)(import .*)'
+
+    def multilinematrix(self,line):
+        tmp = line.count('[') - line.count(']')
+        if tmp > 0:
+            m = re.match(r'(^|\s*)(\S.*)(\[.*$)',line)
+            self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
+        if tmp < 0:
+            self.matrix = 0
+        return tmp
+
+    def cellarray(self,line):
+        tmp = line.count('{') - line.count('}')
+        if tmp > 0:
+            m = re.match(r'(^|\s*)(\S.*)(\{.*$)',line)
+            self.cell = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
+        if tmp < 0:
+            self.cell = 0
+        return tmp
 
     # indentation
     ilvl=0
     istep=0
     iwidth=0
     matrix=0
+    cell=0
     islinecomment=0
     longline=0
     continueline=0
@@ -180,19 +193,14 @@ class Formatter:
             return (0,self.indent() + m.group(2).strip())
 
         # find matrices
-        m = re.match(self.matrixstart, line)
-        if m:
-            self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
-            return (0, self.indent() + self.format(m.group(2)+m.group(3)).strip())
+        tmp = self.matrix
+        if self.multilinematrix(line) or tmp:
+            return (0, self.indent(tmp) + self.format(line).strip())
 
-        if self.matrix:
-            m = re.match(self.matrixend, line)
-            if m:
-                tmp = self.matrix
-                self.matrix = 0
-                return (0, self.indent(tmp) + self.format(m.group(2) + m.group(3)).strip())
-            else:
-                return (0, self.indent(self.matrix) + self.format(line).strip())
+        # find cell arrays
+        tmp = self.cell
+        if self.cellarray(line) or tmp:
+            return (0, self.indent(tmp) + self.format(line).strip())
 
         # find control structures
         m = re.match(self.ctrl_1line, line)
@@ -263,8 +271,8 @@ class Formatter:
 
             # add newline after block
             if self.separateBlocks and offset < 0:
-                    wlines.append('')
-                    blank = True
+                wlines.append('')
+                blank = True
             else:
                 blank = False
 

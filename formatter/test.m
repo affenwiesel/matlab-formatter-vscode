@@ -34,5 +34,8 @@ function foo = myFun(a, b, c)
         4 5 -6;
         - 7 8 9]% REMOVE ADDITIONAL NEWLINES
 
-    even_more = code
+    C = {1
+        [2 3]'
+        {1 M 'three'}};
+
 end
