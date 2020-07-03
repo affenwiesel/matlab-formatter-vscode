@@ -3,14 +3,16 @@ import util.*
 function foo = myFun(a, b, c)
     % ADD SPACES BETWEEN EXPRESSIONS
 
-    N = norm(a .* b - c)
-    % REMOVE ADDITIONAL SPACES
-    foo = -N * a(3) / N
-    % TREAT POWERS AND RATIONAL NUMBERS AND NEGATIVES AS SINGLE EXPRESSION ιω ϱϱκφ
-    p = foo^N - 17
-    r = 42/0.8e15
-    d = 4.7e11
-    neg = -r
+    if a == '{' || a == '['
+        N = norm(a .* b - c)
+        % REMOVE ADDITIONAL SPACES
+        foo = -N * a(3) / N
+        % TREAT POWERS AND RATIONAL NUMBERS AND NEGATIVES AS SINGLE EXPRESSION ιω ϱϱκφ
+        p = foo^N - 17
+        r = 42/0.8e15
+        d = 4.7e11
+        neg = -r
+    end
 
     for k = 1:N
         % ADD INDENTATION AFTER LINE BREAK

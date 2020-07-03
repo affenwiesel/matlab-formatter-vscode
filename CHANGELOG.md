@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.8.1
+bugfixes:
+* brackets in strings and comments
+* multiline array at beginning of line
+
 ### 2.8.0
 features:
 * option to set custom path for formatter

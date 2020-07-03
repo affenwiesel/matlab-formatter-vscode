@@ -14,18 +14,21 @@ class Formatter:
     importcmd = r'(^|\s*)(import .*)'
 
     def multilinematrix(self,line):
+        line = self.cleanLineFromStringsAndComments(line)
         tmp = line.count('[') - line.count(']')
         if tmp > 0:
-            m = re.match(r'(^|\s*)(\S.*)(\[.*$)',line)
+            m = re.match(r'(^|\s*)((\S.*)?)(\[.*$)',line)
             self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
         if tmp < 0:
             self.matrix = 0
         return tmp
 
     def cellarray(self,line):
+        # clean line from strings and comments
+        line = self.cleanLineFromStringsAndComments(line)
         tmp = line.count('{') - line.count('}')
         if tmp > 0:
-            m = re.match(r'(^|\s*)(\S.*)(\{.*$)',line)
+            m = re.match(r'(^|\s*)((\S.*)?)(\{.*$)',line)
             self.cell = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
         if tmp < 0:
             self.cell = 0
@@ -48,13 +51,19 @@ class Formatter:
         self.iwidth=indentwidth
         self.separateBlocks=separateBlocks
 
-    # divide string into three parts by extracting and formatting certain expressions
-    def extract(self, part):
-        # whitespace only
-        m = re.match(r'^\s+$', part)
-        if m:
-            return ('', ' ', '')
 
+    def cleanLineFromStringsAndComments(self, line):
+        clean = line
+        while 1:
+            split = self.extract_string_comment(clean)
+            if not split: break
+            clean = split[0] + ' ' + split[2]
+
+        return clean
+
+
+    # divide string into three parts by extracting and formatting certain expressions
+    def extract_string_comment(self, part):
         # string
         m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)', part)
         if m:
@@ -68,6 +77,19 @@ class Formatter:
         if m:
             self.iscomment=1
             return (m.group(1), m.group(2), '')
+
+        return 0
+
+
+    def extract(self, part):
+        # whitespace only
+        m = re.match(r'^\s+$', part)
+        if m:
+            return ('', ' ', '')
+
+        # string, comment
+        stringOrComment = self.extract_string_comment(part)
+        if stringOrComment: return stringOrComment
 
         # decimal number (e.g. 5.6E-3)
         m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
