@@ -1,5 +1,12 @@
 # Change Log
 
+### 2.8.2
+bugfix:
+issue with comments containing quotes
+
+performance:
+precompile regular expressions
+
 ### 2.8.1
 bugfixes:
 * brackets in strings and comments

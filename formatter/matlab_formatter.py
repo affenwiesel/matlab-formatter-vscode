@@ -4,20 +4,46 @@ import sys
 
 class Formatter:
     # control sequences
-    ctrl_1line = r'(^|\s*)(if|while|for)(\W\S.*\W)(end|endif|endwhile|endfor)(\s*$)'
-    ctrlstart = r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\S.*|\s*$)'
-    ctrlstart_2 = r'(^|\s*)(switch)\s*(\W\S.*|\s*$)'
-    ctrlcont = r'(^|\s*)(elseif|else|case|otherwise|catch)\s*(\W\S.*|\s*$)'
-    ctrlend = r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)'
-    linecomment = r'(^|\s*)%.*$'
-    ellipsis = r'.*\.\.\.\s*$'
-    importcmd = r'(^|\s*)(import .*)'
+    ctrl_1line = re.compile(r'(^|\s*)(if|while|for)(\W\S.*\W)(end|endif|endwhile|endfor)(\s*$)')
+    ctrlstart = re.compile(r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\S.*|\s*$)')
+    ctrlstart_2 = re.compile(r'(^|\s*)(switch)\s*(\W\S.*|\s*$)')
+    ctrlcont = re.compile(r'(^|\s*)(elseif|else|case|otherwise|catch)\s*(\W\S.*|\s*$)')
+    ctrlend = re.compile(r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)')
+    linecomment = re.compile(r'(^|\s*)%.*$')
+    ellipsis = re.compile(r'.*\.\.\.\s*$')
+    importcmd = re.compile(r'(^|\s*)(import .*)')
+
+    # patterns
+    p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)')
+    p_string_dq= re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\"[^\"]*\")([\)\}\]\+\-,;].*|\s+.*|$)')
+    p_comment = re.compile(r'(^|.*\S)\s*(%.*)')
+    p_blank = re.compile(r'^\s+$')
+    p_num_sc = re.compile(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)')
+    p_num_R = re.compile(r'(^|.*\W)\s*(\d+)\s*(\/)\s*(\d+)\s*(\S.*|$)')
+    p_incr = re.compile(r'(^|.*\S)\s*(\+|\-)\s*(\+|\-)\s*([\)\]\},;].*|$)')
+    p_sign = re.compile(r'(.*[\(\[\{,;:=\*/\s])\s*(\+|\-)(\S.*)')
+    p_colon = re.compile(r'(^|.*\S)\s*(:)\s*(\S.*|$)')
+    p_ellipsis = re.compile(r'(^|.*\S)\s*(\.\.\.)\s*(\S.*|$)')
+    p_op_dot = re.compile(r'(^|.*\S)\s*(\.)\s*(\+|\-|\*|/|\^)\s*(=)\s*(\S.*|$)')
+    p_pow_dot = re.compile(r'(^|.*\S)\s*(\.)\s*(\^)\s*(\S.*|$)')
+    p_pow = re.compile(r'(^|.*\S)\s*(\^)\s*(\S.*|$)')
+    p_op_comb = re.compile(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~|\^)\s*(<|>|=|\+|\-|\*|/|\&|\|)\s*(\S.*|$)')
+    p_not = re.compile(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)')
+    p_op = re.compile(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&)\s*(\S.*|$)')
+    p_func = re.compile(r'(.*\w)\s*(\()\s*(\S.*|$)')
+    p_open = re.compile(r'(^|.*)(\(|\[|\{)\s*(\S.*|$)')
+    p_close = re.compile(r'(^|.*\S)\s*(\)|\]|\})(.*|$)')
+    p_comma = re.compile(r'(^|.*\S)\s*(,|;)\s*(\S.*|$)')
+    p_multiws = re.compile(r'(^|.*\S)(\s{2,})(\S.*|$)')
+
+    p_matrixid = re.compile(r'(^|\s*)((\S.*)?)(\[.*$)')
+    p_cellid = re.compile(r'(^|\s*)((\S.*)?)(\{.*$)')
 
     def multilinematrix(self,line):
         line = self.cleanLineFromStringsAndComments(line)
         tmp = line.count('[') - line.count(']')
         if tmp > 0:
-            m = re.match(r'(^|\s*)((\S.*)?)(\[.*$)',line)
+            m = self.p_matrixid.match(line)
             self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
         if tmp < 0:
             self.matrix = 0
@@ -28,7 +54,7 @@ class Formatter:
         line = self.cleanLineFromStringsAndComments(line)
         tmp = line.count('{') - line.count('}')
         if tmp > 0:
-            m = re.match(r'(^|\s*)((\S.*)?)(\{.*$)',line)
+            m = self.p_cellid.match(line)
             self.cell = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
         if tmp < 0:
             self.cell = 0
@@ -53,27 +79,25 @@ class Formatter:
 
 
     def cleanLineFromStringsAndComments(self, line):
-        clean = line
-        while 1:
-            split = self.extract_string_comment(clean)
-            if not split: break
-            clean = split[0] + ' ' + split[2]
-
-        return clean
+        split = self.extract_string_comment(line)
+        if split:
+            return self.cleanLineFromStringsAndComments(split[0]) + ' ' + self.cleanLineFromStringsAndComments(split[2])
+        else:
+            return line
 
 
     # divide string into three parts by extracting and formatting certain expressions
     def extract_string_comment(self, part):
         # string
-        m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)', part)
+        m = self.p_string.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(4))
-        m = re.match(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\"[^\"]*\")([\)\}\]\+\-,;].*|\s+.*|$)', part)
+        m = self.p_string_dq.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # comment
-        m = re.match(r'(^|.*\S)\s*(%.*)', part)
+        m = self.p_comment.match(part)
         if m:
             self.iscomment=1
             return (m.group(1), m.group(2), '')
@@ -83,7 +107,7 @@ class Formatter:
 
     def extract(self, part):
         # whitespace only
-        m = re.match(r'^\s+$', part)
+        m = self.p_blank.match(part)
         if m:
             return ('', ' ', '')
 
@@ -92,87 +116,87 @@ class Formatter:
         if stringOrComment: return stringOrComment
 
         # decimal number (e.g. 5.6E-3)
-        m = re.match(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)\s*(\S.*|$)', part)
+        m = self.p_num_sc.match(part)
         if m:
             return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
         # rational number (e.g. 1/4)
-        m = re.match(r'(^|.*\W)\s*(\d+)\s*(\/)\s*(\d+)\s*(\S.*|$)', part)
+        m = self.p_num_R.match(part)
         if m:
             return (m.group(1) + m.group(2), m.group(3), m.group(4) + m.group(5))
 
         # incrementor (++ or --)
-        m = re.match(r'(^|.*\S)\s*(\+|\-)\s*(\+|\-)\s*([\)\]\},;].*|$)', part)
+        m = self.p_incr.match(part)
         if m:
             return (m.group(1), m.group(2) + m.group(3), m.group(4))
 
         # signum (unary - or +)
-        m = re.match(r'(.*[\(\[\{,;:=\*/\s])\s*(\+|\-)(\S.*)', part)
+        m = self.p_sign.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # colon
-        m = re.match(r'(^|.*\S)\s*(:)\s*(\S.*|$)', part)
+        m = self.p_colon.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # ellipsis
-        m = re.match(r'(^|.*\S)\s*(\.\.\.)\s*(\S.*|$)', part)
+        m = self.p_ellipsis.match(part)
         if m:
             return (m.group(1) + ' ', m.group(2), m.group(3))
 
         # dot-operator-assignmet (e.g. .+=)
-        m = re.match(r'(^|.*\S)\s*(\.)\s*(\+|\-|\*|/|\^)\s*(=)\s*(\S.*|$)', part)
+        m = self.p_op_dot.match(part)
         if m:
             return (m.group(1) + ' ', m.group(2) + m.group(3) + m.group(4), ' ' + m.group(5))
 
         # .power (.^)
-        m = re.match(r'(^|.*\S)\s*(\.)\s*(\^)\s*(\S.*|$)', part)
+        m = self.p_pow_dot.match(part)
         if m:
             return (m.group(1), m.group(2) + m.group(3), m.group(4))
 
         # power (^)
-        m = re.match(r'(^|.*\S)\s*(\^)\s*(\S.*|$)', part)
+        m = self.p_pow.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # combined operator (e.g. +=, .+, etc.)
-        m = re.match(r'(^|.*\S)\s*(\.|\+|\-|\*|\\|/|=|<|>|\||\&|!|~|\^)\s*(<|>|=|\+|\-|\*|/|\&|\|)\s*(\S.*|$)', part)
+        m = self.p_op_comb.match(part)
         if m:
             return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
 
         # not (~ or !)
-        m = re.match(r'(^|.*\S)\s*(!|~)\s*(\S.*|$)', part)
+        m = self.p_not.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # single operator (e.g. +, -, etc.)
-        m = re.match(r'(^|.*\S)\s*(\+|\-|\*|\\|/|=|!|~|<|>|\||\&)\s*(\S.*|$)', part)
+        m = self.p_op.match(part)
         if m:
             return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
 
         # function call
-        m = re.match(r'(.*\w)\s*(\()\s*(\S.*|$)', part)
+        m = self.p_func.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # parenthesis open
-        m = re.match(r'(^|.*)(\(|\[|\{)\s*(\S.*|$)', part)
+        m = self.p_open.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # parenthesis close
-        m = re.match(r'(^|.*\S)\s*(\)|\]|\})(.*|$)', part)
+        m = self.p_close.match(part)
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
         # comma/semicolon
-        m = re.match(r'(^|.*\S)\s*(,|;)\s*(\S.*|$)', part)
+        m = self.p_comma.match(part)
         if m:
             return (m.group(1), m.group(2), ' ' + m.group(3))
 
         # multiple whitespace
-        m = re.match(r'(^|.*\S)(\s{2,})(\S.*|$)', part)
+        m = self.p_multiws.match(part)
         if m:
             return (m.group(1), ' ', m.group(3))
 
