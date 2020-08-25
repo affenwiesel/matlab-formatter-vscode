@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.8.3
+bugfix: comma-less vectors (again...)
+
 ### 2.8.2
 bugfix:
 issue with comments containing quotes
