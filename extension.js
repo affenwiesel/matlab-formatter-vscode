@@ -39,7 +39,7 @@ class MatlabFormatter {
             let filename = ' -';
             let start = " --startLine=" + (range.start.line + 1);
             let end = " --endLine=" + (range.end.line + 1);
-            var p = cp.exec(this.py + this.formatter + filename + indentwidth + separateBlocks + start + end, (err, stdout, stderr) => {
+            var p = cp.exec(this.py + " " + this.formatter + " " + filename + indentwidth + separateBlocks + start + end, (err, stdout, stderr) => {
                 if (stdout != '') {
                     let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line + 1, 0));
                     var edit = [vscode.TextEdit.replace(toreplace, stdout)];
