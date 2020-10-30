@@ -168,7 +168,7 @@ class Formatter:
         # not (~ or !)
         m = self.p_not.match(part)
         if m:
-            return (m.group(1), m.group(2), m.group(3))
+            return (m.group(1) + ' ', m.group(2), m.group(3))
 
         # single operator (e.g. +, -, etc.)
         m = self.p_op.match(part)
