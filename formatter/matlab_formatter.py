@@ -26,12 +26,12 @@ class Formatter:
     # control sequences
     ctrl_1line = re.compile(r'(^|\s*)(if|while|for)(\W\S.*\W)(end|endif|endwhile|endfor)(\s*$)')
     ctrlstart = re.compile(r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\S.*|\s*$)')
+    ctrl_ignore = re.compile(r'(^|\s*)(import|clear|clearvars)(.*$)')
     ctrlstart_2 = re.compile(r'(^|\s*)(switch)\s*(\W\S.*|\s*$)')
     ctrlcont = re.compile(r'(^|\s*)(elseif|else|case|otherwise|catch)\s*(\W\S.*|\s*$)')
     ctrlend = re.compile(r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)')
     linecomment = re.compile(r'(^|\s*)%.*$')
     ellipsis = re.compile(r'.*\.\.\.\s*$')
-    importcmd = re.compile(r'(^|\s*)(import .*)')
 
     # patterns
     p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)')
@@ -253,10 +253,10 @@ class Formatter:
         else:
             self.islinecomment = max(0, self.islinecomment-1)
 
-        # find imports
-        m = re.match(self.importcmd, line)
+        # find imports, clear, etc.
+        m = re.match(self.ctrl_ignore, line)
         if m:
-            return (0,self.indent() + m.group(2).strip())
+            return (0,self.indent() + line.strip())
 
         # find matrices
         tmp = self.matrix
