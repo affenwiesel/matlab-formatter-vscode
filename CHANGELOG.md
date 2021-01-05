@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.8.4
+bugfixes:
+* fix formatting of expression clear
+* indentation of multiline statements with comments
+
 ### 2.8.3
 bugfix: comma-less vectors (again...)
 
