@@ -163,7 +163,7 @@ class Formatter:
         # ellipsis
         m = self.p_ellipsis.match(part)
         if m:
-            return (m.group(1) + ' ', m.group(2), m.group(3))
+            return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
 
         # dot-operator-assignmet (e.g. .+=)
         m = self.p_op_dot.match(part)
@@ -238,9 +238,9 @@ class Formatter:
 
         # find ellipsis
         self.iscomment=0
-        self.format(line)  # filter out ellipsis in comments
+        strippedline = self.cleanLineFromStringsAndComments(line)
         self.continueline = self.longline
-        if not self.iscomment and re.match(self.ellipsis, line):
+        if re.match(self.ellipsis, strippedline):
             self.longline = 1
         else:
             self.longline = 0

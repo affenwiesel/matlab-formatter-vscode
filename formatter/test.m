@@ -19,7 +19,7 @@ function foo = myFun(a, b, c)
         k++
 
         t = a * k ...
-            + b .* k^2 ...
+            + b .* k^2 ... % comment
             + c * k^3
         vectorofstrings = ['α' 'β' 'γ'];
         vectorofstrings = ['α', 'β', 'γ'];
