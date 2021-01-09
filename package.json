@@ -40,7 +40,7 @@
                 "matlab-formatter.pythonPath": {
                     "type": "string",
                     "default": "",
-                    "description": "optional custom path to python executable (requires restarting vscode)"
+                    "description": "required custom path to python executable (requires restarting vscode)"
                 },
                 "matlab-formatter.formatterPath": {
                     "type": "string",
