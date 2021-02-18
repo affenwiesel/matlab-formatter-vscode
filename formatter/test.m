@@ -14,6 +14,8 @@ function foo = myFun(a, b, c)
         neg = -r
     end
 
+    try something; catch e; end
+
     for k = 1:N
         % ADD INDENTATION AFTER LINE BREAK
         k++

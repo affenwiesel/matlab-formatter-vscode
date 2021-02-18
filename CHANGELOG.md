@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.8.6
+add support for inline try;catch;end block
+
 ### 2.8.5
 bugfix: python path
 
