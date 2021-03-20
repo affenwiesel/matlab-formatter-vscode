@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.8.7
+bugfix: comments at end of line starting an if/for/... block
+
 ### 2.8.6
 add support for inline try;catch;end block
 

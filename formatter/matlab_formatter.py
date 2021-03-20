@@ -24,7 +24,7 @@ import sys
 
 class Formatter:
     # control sequences
-    ctrl_1line = re.compile(r'(^|\s*)(if|while|for|try)(\W\S.*\W)(end|endif|endwhile|endfor)(\s*$)')
+    ctrl_1line = re.compile(r'(^|\s*)(if|while|for|try)(\W\S.*\W)(end|endif|endwhile|endfor)(\s+\S.*|\s*$)')
     ctrlstart = re.compile(r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\S.*|\s*$)')
     ctrl_ignore = re.compile(r'(^|\s*)(import|clear|clearvars)(.*$)')
     ctrlstart_2 = re.compile(r'(^|\s*)(switch)\s*(\W\S.*|\s*$)')
@@ -120,7 +120,7 @@ class Formatter:
         m = self.p_comment.match(part)
         if m:
             self.iscomment=1
-            return (m.group(1), m.group(2), '')
+            return (m.group(1) + ' ' ,  m.group(2), '')
 
         return 0
 
@@ -271,7 +271,7 @@ class Formatter:
         # find control structures
         m = re.match(self.ctrl_1line, line)
         if m:
-            return (0, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4))
+            return (0, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4) + ' ' + self.format(m.group(5)).strip())
 
         m = re.match(self.ctrlstart, line)
         if m:
