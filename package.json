@@ -37,6 +37,11 @@
                     "default": true,
                     "description": "add newlines before and after blocks (for, if, etc.)"
                 },
+                "matlab-formatter.extraIndent": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "use extra indent for code inside functions"
+                },
                 "matlab-formatter.pythonPath": {
                     "type": "string",
                     "default": "",

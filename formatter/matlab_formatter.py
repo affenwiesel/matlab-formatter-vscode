@@ -92,11 +92,11 @@ class Formatter:
     iscomment=0
     separateBlocks=False
 
-    def __init__(self, indentwidth, separateBlocks):
+    def __init__(self, indentwidth, separateBlocks, extraIndent):
         self.istep=[]
         self.iwidth=indentwidth
         self.separateBlocks=separateBlocks
-
+        self.extraIndent=extraIndent
 
     def cleanLineFromStringsAndComments(self, line):
         split = self.extract_string_comment(line)
@@ -346,13 +346,18 @@ class Formatter:
         while wlines and not wlines[-1]:
             wlines.pop()
 
+        # remove extra indentation
+        if not(self.extraIndent):
+            wlines = [line if line[:self.iwidth] != self.iwidth*' '
+                      else line[self.iwidth:] for line in wlines]
+
         # write output
         for line in wlines:
             print(line)
 
 
 def main():
-    options = {'--startLine': 1, '--endLine': None, '--indentWidth': 4, '--separateBlocks': True}
+    options = {'--startLine': 1, '--endLine': None, '--indentWidth': 4, '--separateBlocks': True, '--extraIndent': True}
 
     if len(sys.argv) < 2:
         usage   = 'usage: matlab_formatter.py filename [options...]\n'
@@ -375,8 +380,9 @@ def main():
         start = options['--startLine']
         end = options['--endLine']
         sep = options['--separateBlocks']
+        extra = options['--extraIndent']
 
-        formatter = Formatter(indent, sep)
+        formatter = Formatter(indent, sep, extra)
         formatter.formatFile(sys.argv[1], start, end)
 
 if __name__ == '__main__':
