@@ -22,6 +22,7 @@
 import re
 import sys
 
+
 class Formatter:
     # control sequences
     ctrl_1line = re.compile(r'(^|\s*)(if|while|for|try)(\W\S.*\W)(end|endif|endwhile|endfor)(\s+\S.*|\s*$)')
@@ -36,7 +37,7 @@ class Formatter:
 
     # patterns
     p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)')
-    p_string_dq= re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\"[^\"]*\")([\)\}\]\+\-,;].*|\s+.*|$)')
+    p_string_dq = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\"[^\"]*\")([\)\}\]\+\-,;].*|\s+.*|$)')
     p_comment = re.compile(r'(^|.*\S)\s*(%.*)')
     p_blank = re.compile(r'^\s+$')
     p_num_sc = re.compile(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)(.*)')
@@ -60,55 +61,58 @@ class Formatter:
     p_matrixid = re.compile(r'(^|\s*)((\S.*)?)(\[.*$)')
     p_cellid = re.compile(r'(^|\s*)((\S.*)?)(\{.*$)')
 
-    def multilinematrix(self,line):
+    def multilinematrix(self, line):
         line = self.cleanLineFromStringsAndComments(line)
         tmp = line.count('[') - line.count(']')
         if tmp > 0:
             m = self.p_matrixid.match(line)
-            self.matrix = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
+            p = (len(m.group(2))-self.iwidth/2) // self.iwidth
+            self.matrix = int(max(1, p))
         if tmp < 0:
             self.matrix = 0
         return tmp
 
-    def cellarray(self,line):
+    def cellarray(self, line):
         # clean line from strings and comments
         line = self.cleanLineFromStringsAndComments(line)
         tmp = line.count('{') - line.count('}')
         if tmp > 0:
             m = self.p_cellid.match(line)
-            self.cell = int(max(1, (len(m.group(2))-self.iwidth/2)//self.iwidth))
+            p = (len(m.group(2))-self.iwidth/2) // self.iwidth
+            self.cell = int(max(1, p))
         if tmp < 0:
             self.cell = 0
         return tmp
 
     # indentation
-    ilvl=0
-    istep=[]
-    fstep=[]
-    iwidth=0
-    matrix=0
-    cell=0
-    islinecomment=0
-    longline=0
-    continueline=0
-    iscomment=0
-    separateBlocks=False
+    ilvl = 0
+    istep = []
+    fstep = []
+    iwidth = 0
+    matrix = 0
+    cell = 0
+    islinecomment = 0
+    longline = 0
+    continueline = 0
+    iscomment = 0
+    separateBlocks = False
 
     def __init__(self, indentwidth, separateBlocks, indentMode):
-        self.iwidth=indentwidth
-        self.separateBlocks=separateBlocks
-        self.indentMode=indentMode
-
+        self.iwidth = indentwidth
+        self.separateBlocks = separateBlocks
+        self.indentMode = indentMode
 
     def cleanLineFromStringsAndComments(self, line):
         split = self.extract_string_comment(line)
         if split:
-            return self.cleanLineFromStringsAndComments(split[0]) + ' ' + self.cleanLineFromStringsAndComments(split[2])
+            return self.cleanLineFromStringsAndComments(split[0]) + ' ' + \
+                self.cleanLineFromStringsAndComments(split[2])
         else:
             return line
 
+    # divide string into three parts by extracting and formatting certain
+    # expressions
 
-    # divide string into three parts by extracting and formatting certain expressions
     def extract_string_comment(self, part):
         # string
         m = self.p_string.match(part)
@@ -121,11 +125,10 @@ class Formatter:
         # comment
         m = self.p_comment.match(part)
         if m:
-            self.iscomment=1
-            return (m.group(1) + ' ' ,  m.group(2), '')
+            self.iscomment = 1
+            return (m.group(1) + ' ',  m.group(2), '')
 
         return 0
-
 
     def extract(self, part):
         # whitespace only
@@ -135,7 +138,8 @@ class Formatter:
 
         # string, comment
         stringOrComment = self.extract_string_comment(part)
-        if stringOrComment: return stringOrComment
+        if stringOrComment:
+            return stringOrComment
 
         # decimal number (e.g. 5.6E-3)
         m = self.p_num_sc.match(part)
@@ -239,7 +243,7 @@ class Formatter:
     def formatLine(self, line):
 
         # find ellipsis
-        self.iscomment=0
+        self.iscomment = 0
         strippedline = self.cleanLineFromStringsAndComments(line)
         self.continueline = self.longline
         if re.match(self.ellipsis, strippedline):
@@ -258,7 +262,7 @@ class Formatter:
         # find imports, clear, etc.
         m = re.match(self.ctrl_ignore, line)
         if m:
-            return (0,self.indent() + line.strip())
+            return (0, self.indent() + line.strip())
 
         # find matrices
         tmp = self.matrix
@@ -342,7 +346,8 @@ class Formatter:
             self.ilvl = max(0, self.ilvl + offset)
 
             # add newline before block
-            if self.separateBlocks and offset > 0 and not blank and not self.islinecomment:
+            if (self.separateBlocks and offset > 0 and
+                    not blank and not self.islinecomment):
                 wlines.append('')
 
             # add formatted line
@@ -365,17 +370,20 @@ class Formatter:
 
 
 def main():
-    options = {'--startLine': 1, '--endLine': None, '--indentWidth': 4, '--separateBlocks': True, '--indentMode': 'all_functions'}
-    indentModes = {'all_functions': 1, 'only_nested_functions': -1, 'classic': 0}
+    options = dict(startLine=1, endLine=None, indentWidth=4,
+                   separateBlocks=True, indentMode='all_functions')
+    indentModes = dict(all_functions=1, only_nested_functions=-1, classic=0)
 
     if len(sys.argv) < 2:
-        usage   = 'usage: matlab_formatter.py filename [options...]\n'
-        opt     = '  OPTIONS:\n'
+        usage = 'usage: matlab_formatter.py filename [options...]\n'
+        opt = '  OPTIONS:\n'
         for key in options:
             val = options[key]
-            opt += '    %s=%s\n' %(key,re.match(r'\<class \'(.*)\'\>', str(type(val))).group(1).replace('NoneType','int'))
+            key_type = re.match(r'\<class \'(.*)\'\>', str(type(val))).group(1)
+            key_type = key_type.replace('NoneType', 'int')
+            opt += '    --%s=%s\n' % (key, key_type)
 
-        print('%s%s' %(usage,opt), file=sys.stderr)
+        print('%s%s' % (usage, opt), file=sys.stderr)
 
     else:
         for arg in sys.argv[2:]:
@@ -392,10 +400,12 @@ def main():
         start = options['--startLine']
         end = options['--endLine']
         sep = options['--separateBlocks']
-        mode = indentModes.get(options['--indentMode'], indentModes['all_functions'])
+        mode = indentModes.get(options['--indentMode'],
+                               indentModes['all_functions'])
 
         formatter = Formatter(indent, sep, mode)
         formatter.formatFile(sys.argv[1], start, end)
+
 
 if __name__ == '__main__':
     main()
