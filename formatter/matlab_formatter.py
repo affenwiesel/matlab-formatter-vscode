@@ -25,7 +25,8 @@ import sys
 class Formatter:
     # control sequences
     ctrl_1line = re.compile(r'(^|\s*)(if|while|for|try)(\W\S.*\W)(end|endif|endwhile|endfor)(\s+\S.*|\s*$)')
-    ctrlstart = re.compile(r'(^|\s*)(function|if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\S.*|\s*$)')
+    fcnstart = re.compile(r'(^|\s*)(function)\s*(\W\S.*|\s*$)')
+    ctrlstart = re.compile(r'(^|\s*)(if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\S.*|\s*$)')
     ctrl_ignore = re.compile(r'(^|\s*)(import|clear|clearvars)(.*$)')
     ctrlstart_2 = re.compile(r'(^|\s*)(switch)\s*(\W\S.*|\s*$)')
     ctrlcont = re.compile(r'(^|\s*)(elseif|else|case|otherwise|catch)\s*(\W\S.*|\s*$)')
@@ -82,7 +83,8 @@ class Formatter:
 
     # indentation
     ilvl=0
-    istep=0
+    istep=[]
+    fstep=[]
     iwidth=0
     matrix=0
     cell=0
@@ -92,10 +94,10 @@ class Formatter:
     iscomment=0
     separateBlocks=False
 
-    def __init__(self, indentwidth, separateBlocks):
-        self.istep=[]
+    def __init__(self, indentwidth, separateBlocks, indentMode):
         self.iwidth=indentwidth
         self.separateBlocks=separateBlocks
+        self.indentMode=indentMode
 
 
     def cleanLineFromStringsAndComments(self, line):
@@ -273,6 +275,14 @@ class Formatter:
         if m:
             return (0, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4) + ' ' + self.format(m.group(5)).strip())
 
+        m = re.match(self.fcnstart, line)
+        if m:
+            offset = self.indentMode
+            self.fstep.append(1)
+            if self.indentMode == -1:
+                offset = int(len(self.fstep) > 1)
+            return (offset, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip())
+
         m = re.match(self.ctrlstart, line)
         if m:
             self.istep.append(1)
@@ -289,7 +299,10 @@ class Formatter:
 
         m = re.match(self.ctrlend, line)
         if m:
-            step = self.istep.pop()
+            if len(self.istep) > 0:
+                step = self.istep.pop()
+            elif len(self.fstep) > 0:
+                step = self.fstep.pop()
             return (-step, self.indent(-step) + m.group(2) + ' ' + self.format(m.group(3)).strip())
 
         return (0, self.indent() + self.format(line).strip())
@@ -326,7 +339,7 @@ class Formatter:
             (offset, line) = self.formatLine(line)
 
             # adjust indent lvl
-            self.ilvl += offset
+            self.ilvl = max(0, self.ilvl + offset)
 
             # add newline before block
             if self.separateBlocks and offset > 0 and not blank and not self.islinecomment:
@@ -352,7 +365,8 @@ class Formatter:
 
 
 def main():
-    options = {'--startLine': 1, '--endLine': None, '--indentWidth': 4, '--separateBlocks': True}
+    options = {'--startLine': 1, '--endLine': None, '--indentWidth': 4, '--separateBlocks': True, '--indentMode': 'all_functions'}
+    indentModes = {'all_functions': 1, 'only_nested_functions': -1, 'classic': 0}
 
     if len(sys.argv) < 2:
         usage   = 'usage: matlab_formatter.py filename [options...]\n'
@@ -366,17 +380,21 @@ def main():
     else:
         for arg in sys.argv[2:]:
             key, value = arg.split('=')
-            try:
-                value = eval(value.replace('f','F').replace('t','T'))
-            finally:
-                options[key.strip()] = value
+            if any(char.isdigit() for char in value):
+                value = int(value)
+            elif value.lower() == 'true':
+                value = True
+            elif value.lower() == 'false':
+                value = False
+            options[key.strip()] = value
 
         indent = options['--indentWidth']
         start = options['--startLine']
         end = options['--endLine']
         sep = options['--separateBlocks']
+        mode = indentModes.get(options['--indentMode'], indentModes['all_functions'])
 
-        formatter = Formatter(indent, sep)
+        formatter = Formatter(indent, sep, mode)
         formatter.formatFile(sys.argv[1], start, end)
 
 if __name__ == '__main__':
