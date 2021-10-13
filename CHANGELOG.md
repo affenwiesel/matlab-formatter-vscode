@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.8.8
+* bugfix: operator/assignment issue, e.g., +=
+* feature: indentation modes (thanks to Arturo Mendoza Quispe for adding this feature)
+
 ### 2.8.7
 bugfix: comments at end of line starting an if/for/... block
 
