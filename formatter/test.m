@@ -10,7 +10,7 @@ function foo = myFun(a, b, c)
         % TREAT POWERS AND RATIONAL NUMBERS AND NEGATIVES AS SINGLE EXPRESSION ιω ϱϱκφ
         p = foo^N - 17
         r = 42/0.8e15
-        d = 4.7e11
+        d += 4.7e11
         neg = -r
     end
 
@@ -36,7 +36,7 @@ function foo = myFun(a, b, c)
     % INDENT MATRICES SPLIT OVER MULTIPLE LINES
     M = [1 -2 3;
         4 5 -6;
-        - 7 8 9] % REMOVE ADDITIONAL NEWLINES
+        -7 8 9] % REMOVE ADDITIONAL NEWLINES
 
     C = {1
         [2 3]'
