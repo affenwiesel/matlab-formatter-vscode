@@ -323,6 +323,10 @@ class Formatter:
             with open(filename, 'r', encoding='UTF-8') as f:
                 rlines = f.readlines()[start-1:end]
 
+        # take care of empty input
+        if not rlines:
+            rlines = ['']
+
         # get initial indent lvl
         p = r'(\s*)(.*)'
         m = re.match(p, rlines[0])
@@ -363,6 +367,10 @@ class Formatter:
         # remove last line if blank
         while wlines and not wlines[-1]:
             wlines.pop()
+
+        # take care of empty output
+        if not wlines:
+            wlines = ['']
 
         # write output
         for line in wlines:

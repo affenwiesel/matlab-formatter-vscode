@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.8.9
+bugfix: handle empty files correctly
+
 ### 2.8.8
 * bugfix: operator/assignment issue, e.g., +=
 * feature: indentation modes (thanks to Arturo Mendoza Quispe for adding this feature)
