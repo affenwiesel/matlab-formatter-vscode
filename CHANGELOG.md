@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.8.10
+bugfix: handle strings containing quotes
+
 ### 2.8.9
 bugfix: handle empty files correctly
 

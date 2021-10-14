@@ -37,7 +37,7 @@ class Formatter:
 
     # patterns
     p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)')
-    p_string_dq = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\"[^\"]*\")([\)\}\]\+\-,;].*|\s+.*|$)')
+    p_string_dq = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\"([^\"])*\")([\)\}\]\+\-,;].*|\s+.*|$)')
     p_comment = re.compile(r'(^|.*\S)\s*(%.*)')
     p_blank = re.compile(r'^\s+$')
     p_num_sc = re.compile(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)(.*)')
@@ -116,11 +116,12 @@ class Formatter:
     def extract_string_comment(self, part):
         # string
         m = self.p_string.match(part)
+        m2 = self.p_string_dq.match(part)
+        # choose longer string to avoid extracting subexpressions
+        if m2 and (not m or len(m.group(2)) < len(m2.group(2))):
+            m = m2
         if m:
             return (m.group(1), m.group(2), m.group(4))
-        m = self.p_string_dq.match(part)
-        if m:
-            return (m.group(1), m.group(2), m.group(3))
 
         # comment
         m = self.p_comment.match(part)
