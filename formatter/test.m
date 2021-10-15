@@ -14,7 +14,7 @@ function foo = myFun(a, b, c)
         neg = -r
     end
 
-    try something; catch e; end % bla
+    try something; catch e; end; % bla
 
     for k = 1:N
         % ADD INDENTATION AFTER LINE BREAK
@@ -29,7 +29,7 @@ function foo = myFun(a, b, c)
 
         if (norm(t)) % ADD NEWLINE BEFORE AND AFTER BLOCK
             fprintf('Hello world \n');
-        end
+        end;
 
     end
 

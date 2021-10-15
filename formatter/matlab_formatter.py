@@ -25,13 +25,13 @@ import sys
 
 class Formatter:
     # control sequences
-    ctrl_1line = re.compile(r'(^|\s*)(if|while|for|try)(\W\S.*\W)(end|endif|endwhile|endfor)(\s+\S.*|\s*$)')
+    ctrl_1line = re.compile(r'(^|\s*)(if|while|for|try)(\W\S.*\W)((end|endif|endwhile|endfor);?)(\s+\S.*|\s*$)')
     fcnstart = re.compile(r'(^|\s*)(function)\s*(\W\S.*|\s*$)')
     ctrlstart = re.compile(r'(^|\s*)(if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\S.*|\s*$)')
     ctrl_ignore = re.compile(r'(^|\s*)(import|clear|clearvars)(.*$)')
     ctrlstart_2 = re.compile(r'(^|\s*)(switch)\s*(\W\S.*|\s*$)')
     ctrlcont = re.compile(r'(^|\s*)(elseif|else|case|otherwise|catch)\s*(\W\S.*|\s*$)')
-    ctrlend = re.compile(r'(^|\s*)(end|endfunction|endif|endwhile|endfor|endswitch)(\s+\S.*|\s*$)')
+    ctrlend = re.compile(r'(^|\s*)((end|endfunction|endif|endwhile|endfor|endswitch);?)(\s+\S.*|\s*$)')
     linecomment = re.compile(r'(^|\s*)%.*$')
     ellipsis = re.compile(r'.*\.\.\.\s*$')
 
@@ -278,7 +278,7 @@ class Formatter:
         # find control structures
         m = re.match(self.ctrl_1line, line)
         if m:
-            return (0, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4) + ' ' + self.format(m.group(5)).strip())
+            return (0, self.indent() + m.group(2) + ' ' + self.format(m.group(3)).strip() + ' ' + m.group(4) + ' ' + self.format(m.group(6)).strip())
 
         m = re.match(self.fcnstart, line)
         if m:
@@ -308,7 +308,10 @@ class Formatter:
                 step = self.istep.pop()
             elif len(self.fstep) > 0:
                 step = self.fstep.pop()
-            return (-step, self.indent(-step) + m.group(2) + ' ' + self.format(m.group(3)).strip())
+            else:
+                print('There are more end-statements than blocks!', file=sys.stderr)
+                step = 0
+            return (-step, self.indent(-step) + m.group(2) + ' ' + self.format(m.group(4)).strip())
 
         return (0, self.indent() + self.format(line).strip())
 

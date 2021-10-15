@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.8.11
+* bugfix: semicolon after `end`
+* bugfix: add warning in case of mismatching `begin` and `end` statements
+
 ### 2.8.10
 bugfix: handle strings containing quotes
 
@@ -7,11 +11,11 @@ bugfix: handle strings containing quotes
 bugfix: handle empty files correctly
 
 ### 2.8.8
-* bugfix: operator/assignment issue, e.g., +=
+* bugfix: operator/assignment issue, e.g., `+=`
 * feature: indentation modes (thanks to Arturo Mendoza Quispe for adding this feature)
 
 ### 2.8.7
-bugfix: comments at end of line starting an if/for/... block
+bugfix: comments at end of line starting an `if`/`for`/... block
 
 ### 2.8.6
 add support for inline try;catch;end block
@@ -44,7 +48,7 @@ features:
 * option to set custom path for formatter
 * support multiline cell arrays
 
-bugfix: error with multiple spaces after for/if/etc.
+bugfix: error with multiple spaces after `for`/`if`/etc.
 
 ### 2.7.1
 bugfix: fix formatting issues with imports
