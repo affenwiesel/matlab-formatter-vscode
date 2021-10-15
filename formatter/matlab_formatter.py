@@ -304,6 +304,7 @@ class Formatter:
 
         m = re.match(self.ctrlend, line)
         if m:
+            global step
             if len(self.istep) > 0:
                 step = self.istep.pop()
             elif len(self.fstep) > 0:
