@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.8.12
+bugfix: `if` statement with attached parenthesis
+
 ### 2.8.11
 * bugfix: semicolon after `end`
 * bugfix: add warning in case of mismatching `begin` and `end` statements
