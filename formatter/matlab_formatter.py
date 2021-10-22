@@ -33,7 +33,7 @@ class Formatter:
     ctrlcont = re.compile(r'(^|\s*)(elseif|else|case|otherwise|catch)\s*(\W\s*\S.*|\s*$)')
     ctrlend = re.compile(r'(^|\s*)((end|endfunction|endif|endwhile|endfor|endswitch);?)(\s+\S.*|\s*$)')
     linecomment = re.compile(r'(^|\s*)%.*$')
-    ellipsis = re.compile(r'.*\.\.\.\s*$')
+    ellipsis = re.compile(r'.*\.\.\..*$')
 
     # patterns
     p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)')
@@ -167,12 +167,7 @@ class Formatter:
         if m:
             return (m.group(1), m.group(2), m.group(3))
 
-        # ellipsis
-        m = self.p_ellipsis.match(part)
-        if m:
-            return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
-
-        # dot-operator-assignmet (e.g. .+=)
+        # dot-operator-assignment (e.g. .+=)
         m = self.p_op_dot.match(part)
         if m:
             return (m.group(1) + ' ', m.group(2) + m.group(3) + m.group(4), ' ' + m.group(5))
@@ -221,6 +216,11 @@ class Formatter:
         m = self.p_comma.match(part)
         if m:
             return (m.group(1), m.group(2), ' ' + m.group(3))
+
+        # ellipsis
+        m = self.p_ellipsis.match(part)
+        if m:
+            return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
 
         # multiple whitespace
         m = self.p_multiws.match(part)
