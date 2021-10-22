@@ -34,6 +34,9 @@ class Formatter:
     ctrlend = re.compile(r'(^|\s*)((end|endfunction|endif|endwhile|endfor|endswitch);?)(\s+\S.*|\s*$)')
     linecomment = re.compile(r'(^|\s*)%.*$')
     ellipsis = re.compile(r'.*\.\.\..*$')
+    blockcomment_open = re.compile(r'(^|\s*)%\{\s*$')
+    blockcomment_close = re.compile(r'(^|\s*)%\}\s*$')
+    block_close = re.compile(r'\s*[\)\]\}].*$')
 
     # patterns
     p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)')
@@ -91,6 +94,7 @@ class Formatter:
     iwidth = 0
     matrix = 0
     cell = 0
+    isblockcomment = 0
     islinecomment = 0
     longline = 0
     continueline = 0
@@ -243,22 +247,37 @@ class Formatter:
     # take care of indentation and call format(line)
     def formatLine(self, line):
 
+        # determine if linecomment
+        if re.match(self.linecomment, line):
+            self.islinecomment = 2
+        else:
+            self.islinecomment = max(0, self.islinecomment-1)
+
+        # determine if blockcomment
+        if re.match(self.blockcomment_open, line):
+            self.isblockcomment = float("inf")
+        elif re.match(self.blockcomment_close, line):
+            self.isblockcomment = 1
+        else:
+            self.isblockcomment = max(0, self.isblockcomment-1)
+
         # find ellipsis
         self.iscomment = 0
         strippedline = self.cleanLineFromStringsAndComments(line)
-        self.continueline = self.longline
-        if re.match(self.ellipsis, strippedline):
+        if re.match(self.block_close, strippedline) or self.islinecomment or self.isblockcomment:
+            self.continueline = 0
+        else:
+            self.continueline = self.longline
+        if re.match(self.ellipsis, strippedline) and not self.islinecomment and not self.isblockcomment:
             self.longline = 1
         else:
             self.longline = 0
 
         # find comments
-        m = re.match(self.linecomment, line)
-        if m:
-            self.islinecomment = 2
+        if self.isblockcomment:
+            return(0, line.rstrip()) # don't modify indentation in block comments
+        if self.islinecomment == 2:
             return (0, self.indent() + line.strip())
-        else:
-            self.islinecomment = max(0, self.islinecomment-1)
 
         # find imports, clear, etc.
         m = re.match(self.ctrl_ignore, line)
