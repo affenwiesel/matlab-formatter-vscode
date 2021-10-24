@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.9.0
+feature: add support for block comments
+
 ### 2.8.12
 bugfix: `if` statement with attached parenthesis
 
