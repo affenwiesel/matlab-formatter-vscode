@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.9.1
+feature: extend indent mode to `classdef`
+
 ### 2.9.0
 feature: add support for block comments
 

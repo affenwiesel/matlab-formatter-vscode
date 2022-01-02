@@ -26,8 +26,8 @@ import sys
 class Formatter:
     # control sequences
     ctrl_1line = re.compile(r'(^|\s*)(if|while|for|try)(\W\s*\S.*\W)((end|endif|endwhile|endfor);?)(\s+\S.*|\s*$)')
-    fcnstart = re.compile(r'(^|\s*)(function)\s*(\W\s*\S.*|\s*$)')
-    ctrlstart = re.compile(r'(^|\s*)(if|while|for|parfor|try|classdef|methods|properties|events|arguments|enumeration)\s*(\W\s*\S.*|\s*$)')
+    fcnstart = re.compile(r'(^|\s*)(function|classdef)\s*(\W\s*\S.*|\s*$)')
+    ctrlstart = re.compile(r'(^|\s*)(if|while|for|parfor|try|methods|properties|events|arguments|enumeration)\s*(\W\s*\S.*|\s*$)')
     ctrl_ignore = re.compile(r'(^|\s*)(import|clear|clearvars)(.*$)')
     ctrlstart_2 = re.compile(r'(^|\s*)(switch)\s*(\W\s*\S.*|\s*$)')
     ctrlcont = re.compile(r'(^|\s*)(elseif|else|case|otherwise|catch)\s*(\W\s*\S.*|\s*$)')

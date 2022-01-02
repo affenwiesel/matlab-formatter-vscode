@@ -2,7 +2,7 @@
     "name": "matlab-formatter",
     "displayName": "matlab-formatter",
     "description": "format matlab code",
-    "version": "2.9.0",
+    "version": "2.9.1",
     "publisher": "AffenWiesel",
     "engines": {
         "vscode": "^1.20.0"
@@ -40,17 +40,17 @@
                 "matlab-formatter.indentMode": {
                     "type": "string",
                     "enum": [
-                        "all_functions",
+                        "all",
                         "only_nested_functions",
                         "classic"
                     ],
                     "enumDescriptions": [
-                        "Add indentation inside all functions",
-                        "Only add indentation inside nested functions",
-                        "Do not add indentation inside functions"
+                        "Add indentation inside all functions and classdefs",
+                        "Only add indentation inside nested functions and class-methods",
+                        "No indentation of functions and classes (not recommended)"
                     ],
-                    "default": "all_functions",
-                    "description": "smart indentation mode"
+                    "default": "all",
+                    "description": "indentation mode"
                 },
                 "matlab-formatter.pythonPath": {
                     "type": "string",
