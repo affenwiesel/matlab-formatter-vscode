@@ -21,7 +21,8 @@
 
 import re
 import sys
-
+import argparse
+import enum 
 
 class Formatter:
     # control sequences
@@ -401,41 +402,42 @@ class Formatter:
 
 
 def main():
-    options = dict(startLine=1, endLine=None, indentWidth=4,
-                   separateBlocks=True, indentMode='all_functions')
-    indentModes = dict(all_functions=1, only_nested_functions=-1, classic=0)
 
-    if len(sys.argv) < 2:
-        usage = 'usage: matlab_formatter.py filename [options...]\n'
-        opt = '  OPTIONS:\n'
-        for key in options:
-            val = options[key]
-            key_type = re.match(r'\<class \'(.*)\'\>', str(type(val))).group(1)
-            key_type = key_type.replace('NoneType', 'int')
-            opt += '    --%s=%s\n' % (key, key_type)
+    class indentModes(enum.Enum):
+        all = 1
+        only_nested_functions = -1
+        classic = 0
 
-        print('%s%s' % (usage, opt), file=sys.stderr)
+        def __str__(self):
+            return self.name
 
-    else:
-        for arg in sys.argv[2:]:
-            key, value = arg.split('=')
-            if any(char.isdigit() for char in value):
-                value = int(value)
-            elif value.lower() == 'true':
-                value = True
-            elif value.lower() == 'false':
-                value = False
-            options[key.strip()] = value
+        @staticmethod
+        def from_string(s):
+            try:
+                return indentModes[s]
+            except KeyError:
+                raise ValueError()
 
-        indent = options['--indentWidth']
-        start = options['--startLine']
-        end = options['--endLine']
-        sep = options['--separateBlocks']
-        mode = indentModes.get(options['--indentMode'],
-                               indentModes['all_functions'])
+    ap = argparse.ArgumentParser("matlab formatter main script", formatter_class=argparse.RawTextHelpFormatter)
+    ap.add_argument("filename", type=str, help="Input file name")
+    ap.add_argument("--startLine", type=int, default=1, metavar='', help="")
+    ap.add_argument("--endLine", type=int, metavar='', help="")
+    ap.add_argument("--indentWidth", type=int, default=4, metavar='', help="number of spaces used for indentation")
+    ap.add_argument("--separateBlocks", action="store_true", help="add newlines before and after blocks (for, if, etc.)")
+    ap.add_argument("--indentMode", type=indentModes.from_string, choices=list(indentModes), default="all", help=
+"""all:                    Add indentation inside all functions and classdefs
+only_nested_functions:  Only add indentation inside nested functions and class-methods
+classic:                No indentation of functions and classes (not recommended)
+""")
+    args = ap.parse_args()
 
-        formatter = Formatter(indent, sep, mode)
-        formatter.formatFile(sys.argv[1], start, end)
+    indent = args.indentWidth
+    start = args.startLine
+    end = args.endLine
+    sep = args.separateBlocks
+    mode = args.indentMode.value
+    formatter = Formatter(indent, sep, mode)
+    formatter.formatFile(args.filename, start, end)
 
 
 if __name__ == '__main__':

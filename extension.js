@@ -36,7 +36,7 @@ class MatlabFormatter {
         }
         this.formatter = vscode.workspace.getConfiguration('matlab-formatter')['formatterPath'];
         if (this.formatter == '') {
-            this.formatter = '"'+ __dirname + '/formatter/matlab_formatter.py"';
+            this.formatter = '"'+ __dirname + '/matlab_formatter/matlab_formatter.py"';
         }
     }
 
@@ -51,9 +51,9 @@ class MatlabFormatter {
 
     format(document, range) {
         return new Promise((resolve, reject) => {
-            // let formatter = this.py +'"'+ __dirname + '/formatter/matlab_formatter.py"';
+            // let formatter = this.py +'"'+ __dirname + '/matlab_formatter/matlab_formatter.py"';
             let indentwidth = " --indentWidth=" + vscode.workspace.getConfiguration('matlab-formatter')['indentwidth'];
-            let separateBlocks = " --separateBlocks=" + vscode.workspace.getConfiguration('matlab-formatter')['separateBlocks'];
+            let separateBlocks = vscode.workspace.getConfiguration('matlab-formatter')['separateBlocks'] ? " --separateBlocks" : "";
             let indentMode = " --indentMode=" + vscode.workspace.getConfiguration('matlab-formatter')['indentMode'];
             let filename = ' -';
             let start = " --startLine=" + (range.start.line + 1);
