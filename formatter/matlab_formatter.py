@@ -46,7 +46,7 @@ class Formatter:
     p_num_sc = re.compile(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)(.*)')
     p_num_R = re.compile(r'(^|.*\W)\s*(\d+)\s*(\/)\s*(\d+)(.*)')
     p_incr = re.compile(r'(^|.*\S)\s*(\+|\-)\s*(\+|\-)\s*([\)\]\},;].*|$)')
-    p_sign = re.compile(r'(.*[\(\[\{,;:=\*/\s])\s*(\+|\-)(\w.*)')
+    p_sign = re.compile(r'(^|.*[\(\[\{,;:=\*/\s])\s*(\+|\-)(\w.*)')
     p_colon = re.compile(r'(^|.*\S)\s*(:)\s*(\S.*|$)')
     p_ellipsis = re.compile(r'(^|.*\S)\s*(\.\.\.)\s*(\S.*|$)')
     p_op_dot = re.compile(r'(^|.*\S)\s*(\.)\s*(\+|\-|\*|/|\^)\s*(=)\s*(\S.*|$)')

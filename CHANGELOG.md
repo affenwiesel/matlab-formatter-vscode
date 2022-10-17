@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.9.2
+bugfix: unary minus at start of line
+
 ### 2.9.1
 feature: extend indent mode to `classdef`
 
