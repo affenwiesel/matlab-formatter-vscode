@@ -37,6 +37,7 @@ class Formatter:
     blockcomment_open = re.compile(r'(^|\s*)%\{\s*$')
     blockcomment_close = re.compile(r'(^|\s*)%\}\s*$')
     block_close = re.compile(r'\s*[\)\]\}].*$')
+    ignore_command = re.compile(r'.*formatter\s+ignore\s+(\d*).*$')
 
     # patterns
     p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)')
@@ -100,6 +101,7 @@ class Formatter:
     continueline = 0
     iscomment = 0
     separateBlocks = False
+    ignoreLines = 0
 
     def __init__(self, indentwidth, separateBlocks, indentMode):
         self.iwidth = indentwidth
@@ -247,6 +249,10 @@ class Formatter:
     # take care of indentation and call format(line)
     def formatLine(self, line):
 
+        if (self.ignoreLines > 0):
+            self.ignoreLines -= 1
+            return (0, self.indent() + line.strip())
+
         # determine if linecomment
         if re.match(self.linecomment, line):
             self.islinecomment = 2
@@ -277,6 +283,13 @@ class Formatter:
         if self.isblockcomment:
             return(0, line.rstrip()) # don't modify indentation in block comments
         if self.islinecomment == 2:
+            # check for ignore statement
+            m = re.match(self.ignore_command, line)#, re.IGNORECASE)
+            if m:
+                if m.group(1) and int(m.group(1)) > 1:
+                    self.ignoreLines =  int(m.group(1))
+                else:
+                    self.ignoreLines =  1
             return (0, self.indent() + line.strip())
 
         # find imports, clear, etc.
