@@ -55,10 +55,11 @@ class MatlabFormatter {
             let indentwidth = " --indentWidth=" + vscode.workspace.getConfiguration('matlab-formatter')['indentwidth'];
             let separateBlocks = " --separateBlocks=" + vscode.workspace.getConfiguration('matlab-formatter')['separateBlocks'];
             let indentMode = " --indentMode=" + vscode.workspace.getConfiguration('matlab-formatter')['indentMode'];
+            let addSpaces = " --addSpaces=" + vscode.workspace.getConfiguration('matlab-formatter')['addSpaces'];
             let filename = ' -';
             let start = " --startLine=" + (range.start.line + 1);
             let end = " --endLine=" + (range.end.line + 1);
-            var p = cp.exec(this.py + " " + this.formatter + " " + filename + indentwidth + separateBlocks + indentMode + start + end, (err, stdout, stderr) => {
+            var p = cp.exec(this.py + " " + this.formatter + " " + filename + indentwidth + separateBlocks + indentMode + addSpaces + start + end, (err, stdout, stderr) => {
                 if (stdout != '') {
                     let toreplace = document.validateRange(new vscode.Range(range.start.line, 0, range.end.line + 1, 0));
                     var edit = [vscode.TextEdit.replace(toreplace, stdout)];

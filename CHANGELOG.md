@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.10.0
+* add option to customize wrapping of operators with spaces
+* add option to switch of formatter for selected lines via comment `% formatter ignore N`
+
 ### 2.9.2
 bugfix: unary minus at start of line
 
