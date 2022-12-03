@@ -2,7 +2,7 @@
     "name": "matlab-formatter",
     "displayName": "matlab-formatter",
     "description": "format matlab code",
-    "version": "2.10.0",
+    "version": "2.10.1",
     "publisher": "AffenWiesel",
     "engines": {
         "vscode": "^1.20.0"
@@ -64,7 +64,7 @@
                         "Wrap all operators with spaces, except ^ and .^",
                         "Don't wrap any operators with spaces. (not recommended)"
                     ],
-                    "default": "all_functions",
+                    "default": "all_operators",
                     "description": "indentation mode"
                 },
                 "matlab-formatter.pythonPath": {

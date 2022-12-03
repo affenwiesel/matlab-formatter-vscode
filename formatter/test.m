@@ -8,7 +8,7 @@ function foo = myFun(a, b, c)
         % REMOVE ADDITIONAL SPACES
         foo = -N * a(3) / N
         % TREAT POWERS AND RATIONAL NUMBERS AND NEGATIVES AS SINGLE EXPRESSION ιω ϱϱκφ
-        p = foo^N - 17
+        p = foo ^ N - 17
         r = 42/0.8e15
         d += 4.7e11
         neg = -r
@@ -21,8 +21,8 @@ function foo = myFun(a, b, c)
         k++
 
         t = a * k ...
-            +b .* k^2 ... % comment
-            +c * k^3
+            +b .* k ^ 2 ... % comment
+            +c * k ^ 3
         vectorofstrings = ['α' 'β' 'γ'];
         vectorofstrings = ['α', 'β', 'γ'];
         vectorofstuff = ['foo' dead('beef', 3.14, bar) -foo('bar', '42')]

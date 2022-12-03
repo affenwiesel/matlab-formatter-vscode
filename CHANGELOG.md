@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.10.1
+bugfix: default value addSpaces
+
 ### 2.10.0
 * add option to customize wrapping of operators with spaces
 * add option to switch of formatter for selected lines via comment `% formatter ignore N`
