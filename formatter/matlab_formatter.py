@@ -40,8 +40,8 @@ class Formatter:
     ignore_command = re.compile(r'.*formatter\s+ignore\s+(\d*).*$')
 
     # patterns
-    p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-,;].*|\s+.*|$)')
-    p_string_dq = re.compile(r'(^|.*[\(\[\{,;=\+\-\s])\s*(\"([^\"])*\")([\)\}\]\+\-,;].*|\s+.*|$)')
+    p_string = re.compile(r'(^|.*[\(\[\{,;=\+\-\*\/\|\&\s])\s*(\'([^\']|\'\')+\')([\)\}\]\+\-\*\/=\|\&,;].*|\s+.*|$)')
+    p_string_dq = re.compile(r'(^|.*[\(\[\{,;=\+\-\*\/\|\&\s])\s*(\"([^\"])*\")([\)\}\]\+\-\*\/=\|\&,;].*|\s+.*|$)')
     p_comment = re.compile(r'(^|.*\S)\s*(%.*)')
     p_blank = re.compile(r'^\s+$')
     p_num_sc = re.compile(r'(^|.*\W)\s*(\d+\.?\d*)([eE][+-]?)(\d+)(.*)')
@@ -103,10 +103,11 @@ class Formatter:
     separateBlocks = False
     ignoreLines = 0
 
-    def __init__(self, indentwidth, separateBlocks, indentMode):
+    def __init__(self, indentwidth, separateBlocks, indentMode, operatorSep):
         self.iwidth = indentwidth
         self.separateBlocks = separateBlocks
         self.indentMode = indentMode
+        self.operatorSep = operatorSep
 
     def cleanLineFromStringsAndComments(self, line):
         split = self.extract_string_comment(line)
@@ -176,22 +177,27 @@ class Formatter:
         # dot-operator-assignment (e.g. .+=)
         m = self.p_op_dot.match(part)
         if m:
-            return (m.group(1) + ' ', m.group(2) + m.group(3) + m.group(4), ' ' + m.group(5))
+            sep = ' ' if self.operatorSep > 0 else ''
+            return (m.group(1) + sep, m.group(2) + m.group(3) + m.group(4), sep + m.group(5))
 
         # .power (.^)
         m = self.p_pow_dot.match(part)
         if m:
-            return (m.group(1), m.group(2) + m.group(3), m.group(4))
+            sep = ' ' if self.operatorSep > 0.5 else ''
+            return (m.group(1) + sep, m.group(2) + m.group(3), sep + m.group(4))
 
         # power (^)
         m = self.p_pow.match(part)
         if m:
-            return (m.group(1), m.group(2), m.group(3))
+            sep = ' ' if self.operatorSep > 0.5 else ''
+            return (m.group(1) + sep, m.group(2), sep + m.group(3))
 
         # combined operator (e.g. +=, .+, etc.)
         m = self.p_op_comb.match(part)
         if m:
-            return (m.group(1) + ' ', m.group(2) + m.group(3), ' ' + m.group(4))
+            # sep = ' ' if m.group(3) == '=' or self.operatorSep > 0 else ''
+            sep = ' ' if self.operatorSep > 0 else ''
+            return (m.group(1) + sep, m.group(2) + m.group(3), sep + m.group(4))
 
         # not (~ or !)
         m = self.p_not.match(part)
@@ -201,7 +207,9 @@ class Formatter:
         # single operator (e.g. +, -, etc.)
         m = self.p_op.match(part)
         if m:
-            return (m.group(1) + ' ', m.group(2), ' ' + m.group(3))
+            # sep = ' ' if m.group(2) == '=' or self.operatorSep > 0 else ''
+            sep = ' ' if self.operatorSep > 0 else ''
+            return (m.group(1) + sep, m.group(2), sep + m.group(3))
 
         # function call
         m = self.p_func.match(part)
@@ -244,7 +252,8 @@ class Formatter:
 
     # compute indentation
     def indent(self, add=0):
-        return (self.ilvl+self.continueline+add)*self.iwidth*' '
+        indnt = (self.ilvl+self.continueline+add)*self.iwidth*' '
+        return indnt
 
     # take care of indentation and call format(line)
     def formatLine(self, line):
@@ -284,7 +293,7 @@ class Formatter:
             return(0, line.rstrip()) # don't modify indentation in block comments
         if self.islinecomment == 2:
             # check for ignore statement
-            m = re.match(self.ignore_command, line)#, re.IGNORECASE)
+            m = re.match(self.ignore_command, line)
             if m:
                 if m.group(1) and int(m.group(1)) > 1:
                     self.ignoreLines =  int(m.group(1))
@@ -415,8 +424,10 @@ class Formatter:
 
 def main():
     options = dict(startLine=1, endLine=None, indentWidth=4,
-                   separateBlocks=True, indentMode='all_functions')
+                   separateBlocks=True, indentMode=None,
+                   addSpaces=None)
     indentModes = dict(all_functions=1, only_nested_functions=-1, classic=0)
+    operatorSpaces = dict(all_operators=1, exclude_pow=0.5, no_spaces=0)
 
     if len(sys.argv) < 2:
         usage = 'usage: matlab_formatter.py filename [options...]\n'
@@ -438,16 +449,16 @@ def main():
                 value = True
             elif value.lower() == 'false':
                 value = False
-            options[key.strip()] = value
+            options[key.strip().strip('-')] = value
 
-        indent = options['--indentWidth']
-        start = options['--startLine']
-        end = options['--endLine']
-        sep = options['--separateBlocks']
-        mode = indentModes.get(options['--indentMode'],
-                               indentModes['all_functions'])
+        indent = options['indentWidth']
+        start = options['startLine']
+        end = options['endLine']
+        sep = options['separateBlocks']
+        mode = indentModes.get(options['indentMode'], indentModes['all_functions'])
+        opSp = operatorSpaces.get(options['addSpaces'], operatorSpaces['exclude_pow'])
 
-        formatter = Formatter(indent, sep, mode)
+        formatter = Formatter(indent, sep, mode, opSp)
         formatter.formatFile(sys.argv[1], start, end)
 
 
