@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.10.2
+add support for spmd
+
 ### 2.10.1
 bugfix: default value addSpaces
 
