@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.10.3
+bugfix: formatting of strings
+
 ### 2.10.2
 add support for spmd
 
