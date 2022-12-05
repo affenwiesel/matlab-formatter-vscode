@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.10.4
+add option to customize indentation of matrices/cells
+
 ### 2.10.3
 bugfix: formatting of strings
 

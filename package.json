@@ -2,7 +2,7 @@
     "name": "matlab-formatter",
     "displayName": "matlab-formatter",
     "description": "format matlab code",
-    "version": "2.10.3",
+    "version": "2.10.4",
     "publisher": "AffenWiesel",
     "engines": {
         "vscode": "^1.20.0"
@@ -65,7 +65,20 @@
                         "Don't wrap any operators with spaces. (not recommended)"
                     ],
                     "default": "all_operators",
-                    "description": "indentation mode"
+                    "description": "Wrapping of operators with spaces."
+                },
+                "matlab-formatter.matrixIndet": {
+                    "type": "string",
+                    "enum": [
+                        "aligned",
+                        "simple"
+                    ],
+                    "enumDescriptions": [
+                        "Keep rows of a matrix aligned.",
+                        "Use simpe indentation for matrices"
+                    ],
+                    "default": "aligned",
+                    "description": "Indentation of matrices"
                 },
                 "matlab-formatter.pythonPath": {
                     "type": "string",

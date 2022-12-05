@@ -7,8 +7,7 @@ function foo = myFun(a, b, c)
         N = norm(a .* b - c)
         % REMOVE ADDITIONAL SPACES
         foo = -N * a(3) / N
-        % TREAT POWERS AND RATIONAL NUMBERS AND NEGATIVES AS SINGLE EXPRESSION ιω ϱϱκφ
-        p = foo ^ N - 17
+        % TREAT RATIONAL NUMBERS AND NEGATIVES AS SINGLE EXPRESSION
         r = 42/0.8e15
         d += 4.7e11
         neg = -r
@@ -21,11 +20,11 @@ function foo = myFun(a, b, c)
         k++
 
         t = a * k ...
-            +b .* k ^ 2 ... % comment
-            +c * k ^ 3
+            +b .* k^2 ... % comment
+            +c * k^3
         vectorofstrings = ['α' 'β' 'γ'];
         vectorofstrings = ['α', 'β', 'γ'];
-        vectorofstuff = ['foo' dead('beef', 3.14, bar) -foo('bar', '42')]
+        vectorofstuff = ['foo' -dead('beef', 3.14, bar) -foo('bar', '42')]
 
         if (norm(t)) % ADD NEWLINE BEFORE AND AFTER BLOCK
             fprintf('Hello world \n');
@@ -38,12 +37,12 @@ function foo = myFun(a, b, c)
         4 5 -6;
         -7 8 9] % REMOVE ADDITIONAL NEWLINES
 
+    cellWithLongName = {1
+        [2 3]'
+        {1 M 'three'}};
+
     % exclude the next N (default=1) nonempty lines of code from formatting
     % formatter ignore N    code)
     this=a   *very*  ill ^ formated+    loc
-
-    C = {1
-        [2 3]'
-        {1 M 'three'}};
 
 end

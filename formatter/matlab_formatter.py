@@ -62,30 +62,25 @@ class Formatter:
     p_comma = re.compile(r'(.*?\S|^)\s*(,|;)\s*(\S.*|$)')
     p_multiws = re.compile(r'(.*?\S|^)(\s{2,})(\S.*|$)')
 
-    p_matrixid = re.compile(r'(\s*)((\S.*)?)(\[.*$)')
-    p_cellid = re.compile(r'(\s*)((\S.*)?)(\{.*$)')
+    def cellIndent(self, line, cellOpen:str, cellClose:str, indent):
+        # clean line from strings and comments
+        pattern = re.compile(fr'(\s*)((\S.*)?)(\{cellOpen}.*$)')
+        line = self.cleanLineFromStringsAndComments(line)
+        opened = line.count(cellOpen) - line.count(cellClose)
+        if opened > 0:
+            m = pattern.match(line)
+            n = len(m.group(2))
+            indent = (n+1) if self.matrixIndent else self.iwidth
+        elif opened < 0:
+            indent = 0
+        return (opened, indent)
 
     def multilinematrix(self, line):
-        line = self.cleanLineFromStringsAndComments(line)
-        tmp = line.count('[') - line.count(']')
-        if tmp > 0:
-            m = self.p_matrixid.match(line)
-            p = (len(m.group(2))-self.iwidth/2) // self.iwidth
-            self.matrix = int(max(1, p))
-        if tmp < 0:
-            self.matrix = 0
+        tmp, self.matrix = self.cellIndent(line, '[', ']', self.matrix)
         return tmp
 
     def cellarray(self, line):
-        # clean line from strings and comments
-        line = self.cleanLineFromStringsAndComments(line)
-        tmp = line.count('{') - line.count('}')
-        if tmp > 0:
-            m = self.p_cellid.match(line)
-            p = (len(m.group(2))-self.iwidth/2) // self.iwidth
-            self.cell = int(max(1, p))
-        if tmp < 0:
-            self.cell = 0
+        tmp, self.cell = self.cellIndent(line, '{', '}', self.cell)
         return tmp
 
     # indentation
@@ -103,11 +98,12 @@ class Formatter:
     separateBlocks = False
     ignoreLines = 0
 
-    def __init__(self, indentwidth, separateBlocks, indentMode, operatorSep):
+    def __init__(self, indentwidth, separateBlocks, indentMode, operatorSep, matrixIndent):
         self.iwidth = indentwidth
         self.separateBlocks = separateBlocks
         self.indentMode = indentMode
         self.operatorSep = operatorSep
+        self.matrixIndent = matrixIndent
 
     def cleanLineFromStringsAndComments(self, line):
         split = self.extract_string_comment(line)
@@ -251,8 +247,8 @@ class Formatter:
         return part
 
     # compute indentation
-    def indent(self, add=0):
-        indnt = (self.ilvl+self.continueline+add)*self.iwidth*' '
+    def indent(self, addspaces=0):
+        indnt = ((self.ilvl+self.continueline)*self.iwidth + addspaces)*' '
         return indnt
 
     # take care of indentation and call format(line)
@@ -341,7 +337,7 @@ class Formatter:
 
         m = re.match(self.ctrlcont, line)
         if m:
-            return (0, self.indent(-1) + m.group(2) + ' ' + self.format(m.group(3)).strip())
+            return (0, self.indent(-self.iwidth) + m.group(2) + ' ' + self.format(m.group(3)).strip())
 
         m = re.match(self.ctrlend, line)
         if m:
@@ -352,7 +348,7 @@ class Formatter:
             else:
                 print('There are more end-statements than blocks!', file=sys.stderr)
                 step = 0
-            return (-step, self.indent(-step) + m.group(2) + ' ' + self.format(m.group(4)).strip())
+            return (-step, self.indent(-step*self.iwidth) + m.group(2) + ' ' + self.format(m.group(4)).strip())
 
         return (0, self.indent() + self.format(line).strip())
 
@@ -424,10 +420,12 @@ class Formatter:
 
 def main():
     options = dict(startLine=1, endLine=None, indentWidth=4,
-                   separateBlocks=True, indentMode=None,
-                   addSpaces=None)
+                   separateBlocks=True, indentMode='',
+                   addSpaces='', matrixIndet='')
+
     indentModes = dict(all_functions=1, only_nested_functions=-1, classic=0)
     operatorSpaces = dict(all_operators=1, exclude_pow=0.5, no_spaces=0)
+    matrixIndentation = dict(aligned=1, simple=0)
 
     if len(sys.argv) < 2:
         usage = 'usage: matlab_formatter.py filename [options...]\n'
@@ -457,8 +455,9 @@ def main():
         sep = options['separateBlocks']
         mode = indentModes.get(options['indentMode'], indentModes['all_functions'])
         opSp = operatorSpaces.get(options['addSpaces'], operatorSpaces['exclude_pow'])
+        matInd = operatorSpaces.get(options['matrixIndet'], matrixIndentation['aligned'])
 
-        formatter = Formatter(indent, sep, mode, opSp)
+        formatter = Formatter(indent, sep, mode, opSp, matInd)
         formatter.formatFile(sys.argv[1], start, end)
 
 
