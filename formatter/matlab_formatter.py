@@ -421,7 +421,7 @@ class Formatter:
 def main():
     options = dict(startLine=1, endLine=None, indentWidth=4,
                    separateBlocks=True, indentMode='',
-                   addSpaces='', matrixIndet='')
+                   addSpaces='', matrixIndent='')
 
     indentModes = dict(all_functions=1, only_nested_functions=-1, classic=0)
     operatorSpaces = dict(all_operators=1, exclude_pow=0.5, no_spaces=0)
@@ -455,7 +455,7 @@ def main():
         sep = options['separateBlocks']
         mode = indentModes.get(options['indentMode'], indentModes['all_functions'])
         opSp = operatorSpaces.get(options['addSpaces'], operatorSpaces['exclude_pow'])
-        matInd = operatorSpaces.get(options['matrixIndet'], matrixIndentation['aligned'])
+        matInd = matrixIndentation.get(options['matrixIndent'], matrixIndentation['aligned'])
 
         formatter = Formatter(indent, sep, mode, opSp, matInd)
         formatter.formatFile(sys.argv[1], start, end)

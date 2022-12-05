@@ -34,12 +34,12 @@ function foo = myFun(a, b, c)
 
     % INDENT MATRICES SPLIT OVER MULTIPLE LINES
     M = [1 -2 3;
-        4 5 -6;
-        -7 8 9] % REMOVE ADDITIONAL NEWLINES
+         4 5 -6;
+         -7 8 9] % REMOVE ADDITIONAL NEWLINES
 
     cellWithLongName = {1
-        [2 3]'
-        {1 M 'three'}};
+                        [2 3]'
+                        {1 M 'three'}};
 
     % exclude the next N (default=1) nonempty lines of code from formatting
     % formatter ignore N    code)

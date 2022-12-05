@@ -56,7 +56,7 @@ class MatlabFormatter {
             let separateBlocks = " --separateBlocks=" + vscode.workspace.getConfiguration('matlab-formatter')['separateBlocks'];
             let indentMode = " --indentMode=" + vscode.workspace.getConfiguration('matlab-formatter')['indentMode'];
             let addSpaces = " --addSpaces=" + vscode.workspace.getConfiguration('matlab-formatter')['addSpaces'];
-            let matrixIndent = " --matrixIndet=" + vscode.workspace.getConfiguration('matlab-formatter')['matrixIndet'];
+            let matrixIndent = " --matrixIndent=" + vscode.workspace.getConfiguration('matlab-formatter')['matrixIndent'];
             let filename = ' -';
             let start = " --startLine=" + (range.start.line + 1);
             let end = " --endLine=" + (range.end.line + 1);
