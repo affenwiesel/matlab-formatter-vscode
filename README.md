@@ -6,7 +6,7 @@ Also usable as standalone without VScode.
 ![IMAGE](images/example.gif)
 
 ## Requirements
-- python 3
+- python 3.6
 
 ## Extension Settings
 * `matlab-formatter.indentwidth`: Number of spaces used for indentation.
