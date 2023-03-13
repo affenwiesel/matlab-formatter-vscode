@@ -262,6 +262,7 @@ class Formatter:
         if re.match(self.linecomment, line):
             self.islinecomment = 2
         else:
+            # we also need to track whether the previous line was a commment
             self.islinecomment = max(0, self.islinecomment-1)
 
         # determine if blockcomment
@@ -275,11 +276,12 @@ class Formatter:
         # find ellipsis
         self.iscomment = 0
         strippedline = self.cleanLineFromStringsAndComments(line)
-        if re.match(self.block_close, strippedline) or self.islinecomment or self.isblockcomment:
+        ellipsisInComment = self.islinecomment == 2 or self.isblockcomment
+        if re.match(self.block_close, strippedline) or ellipsisInComment:
             self.continueline = 0
         else:
             self.continueline = self.longline
-        if re.match(self.ellipsis, strippedline) and not self.islinecomment and not self.isblockcomment:
+        if re.match(self.ellipsis, strippedline) and not ellipsisInComment:
             self.longline = 1
         else:
             self.longline = 0

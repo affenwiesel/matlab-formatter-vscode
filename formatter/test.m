@@ -14,11 +14,12 @@ function foo = myFun(a, b, c)
     end
 
     try something; catch e; end; % bla
-
+    % bla
     for k = 1:N
         % ADD INDENTATION AFTER LINE BREAK
         k++
 
+        % comment
         t = a * k ...
             +b .* k^2 ... % comment
             +c * k^3
@@ -42,7 +43,7 @@ function foo = myFun(a, b, c)
                         {1 M 'three'}};
 
     % exclude the next N (default=1) nonempty lines of code from formatting
-    % formatter ignore N    code)
+    % formatter ignore N
     this=a   *very*  ill ^ formated+    loc
 
 end

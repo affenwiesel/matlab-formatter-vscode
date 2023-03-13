@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.10.5
+bugfix: comments before multiline statement
+
 ### 2.10.4
 add option to customize indentation of matrices/cells
 
