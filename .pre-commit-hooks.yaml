@@ -1,0 +1,8 @@
+-   id: matlab-formatter
+    name: matlab formatter
+    description: Format matlab code files
+    entry: matlab-formatter
+    args: ["-i"]
+    language: python
+    types: [file]
+    files: \.m$
