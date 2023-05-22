@@ -19,9 +19,17 @@
 
  '''
 
+import os
 import re
 import sys
 import argparse
+
+def detect_newline(file) -> str: 
+    """Detects the newline character of a file."""
+    with open(file, 'rb') as f:
+        if b'\r\n' in f.read():
+            return '\r\n'
+    return '\n'
 
 class Formatter:
     # control sequences
@@ -360,9 +368,11 @@ class Formatter:
         if filename == '-':
             with sys.stdin as f:
                 rlines = f.readlines()[start-1:end]
+            newline = os.linesep  # use system default
         else:
             with open(filename, 'r', encoding='UTF-8') as f:
                 rlines = f.readlines()[start-1:end]
+            newline = detect_newline(filename)
 
         # take care of empty input
         if not rlines:
@@ -419,7 +429,7 @@ class Formatter:
             for line in wlines:
                 print(line)
         else:
-            with open(out_file, 'w', encoding='UTF-8') as f:
+            with open(out_file, 'w', encoding='UTF-8', newline=newline) as f:
                 for line in wlines:
                     f.write(line + '\n')
 

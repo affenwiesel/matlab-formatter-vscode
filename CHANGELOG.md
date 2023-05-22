@@ -1,5 +1,8 @@
 # Change Log
 
+### 2.10.6
+bugfix: Keep line endings of input file
+
 ### 2.10.5
 bugfix: comments before multiline statement
 

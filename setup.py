@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="matlab-formatter",
-    version="0.1.0",
+    version="2.10.6",
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
     install_requires=[],
     entry_points={
