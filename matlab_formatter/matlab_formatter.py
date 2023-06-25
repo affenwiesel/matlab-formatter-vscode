@@ -19,9 +19,17 @@
 
  '''
 
+import os
 import re
 import sys
+import argparse
 
+def detect_newline(file) -> str: 
+    """Detects the newline character of a file."""
+    with open(file, 'rb') as f:
+        if b'\r\n' in f.read():
+            return '\r\n'
+    return '\n'
 
 class Formatter:
     # control sequences
@@ -355,16 +363,16 @@ class Formatter:
         return (0, self.indent() + self.format(line).strip())
 
     # format file from line 'start' to line 'end'
-    def formatFile(self, filename, start, end):
+    def formatFile(self, filename, start, end, out_file=None):
         # read lines from file
-        wlines = rlines = []
-
         if filename == '-':
             with sys.stdin as f:
                 rlines = f.readlines()[start-1:end]
+            newline = os.linesep  # use system default
         else:
             with open(filename, 'r', encoding='UTF-8') as f:
                 rlines = f.readlines()[start-1:end]
+            newline = detect_newline(filename)
 
         # take care of empty input
         if not rlines:
@@ -378,6 +386,7 @@ class Formatter:
             rlines[0] = m.group(2)
 
         blank = True
+        wlines = []
         for line in rlines:
             # remove additional newlines
             if re.match(r'^\s*$', line):
@@ -416,52 +425,30 @@ class Formatter:
             wlines = ['']
 
         # write output
-        for line in wlines:
-            print(line)
-
+        if out_file is None:
+            for line in wlines:
+                print(line)
+        else:
+            with open(out_file, 'w', encoding='UTF-8', newline=newline) as f:
+                for line in wlines:
+                    f.write(line + '\n')
 
 def main():
-    options = dict(startLine=1, endLine=None, indentWidth=4,
-                   separateBlocks=True, indentMode='',
-                   addSpaces='', matrixIndent='')
-
-    indentModes = dict(all_functions=1, only_nested_functions=-1, classic=0)
-    operatorSpaces = dict(all_operators=1, exclude_pow=0.5, no_spaces=0)
-    matrixIndentation = dict(aligned=1, simple=0)
-
-    if len(sys.argv) < 2:
-        usage = 'usage: matlab_formatter.py filename [options...]\n'
-        opt = '  OPTIONS:\n'
-        for key in options:
-            val = options[key]
-            key_type = re.match(r'\<class \'(.*)\'\>', str(type(val))).group(1)
-            key_type = key_type.replace('NoneType', 'int')
-            opt += '    --%s=%s\n' % (key, key_type)
-
-        print('%s%s' % (usage, opt), file=sys.stderr)
-
-    else:
-        for arg in sys.argv[2:]:
-            key, value = arg.split('=')
-            if any(char.isdigit() for char in value):
-                value = int(value)
-            elif value.lower() == 'true':
-                value = True
-            elif value.lower() == 'false':
-                value = False
-            options[key.strip().strip('-')] = value
-
-        indent = options['indentWidth']
-        start = options['startLine']
-        end = options['endLine']
-        sep = options['separateBlocks']
-        mode = indentModes.get(options['indentMode'], indentModes['all_functions'])
-        opSp = operatorSpaces.get(options['addSpaces'], operatorSpaces['exclude_pow'])
-        matInd = matrixIndentation.get(options['matrixIndent'], matrixIndentation['aligned'])
-
-        formatter = Formatter(indent, sep, mode, opSp, matInd)
-        formatter.formatFile(sys.argv[1], start, end)
+    parser = argparse.ArgumentParser(prog='matlab-formatter')
+    parser.add_argument('file', type= str, nargs='+')
+    parser.add_argument('--startLine', type=int, default=1)
+    parser.add_argument('--endLine', type=int, default=None)
+    parser.add_argument('--indentWidth', type=int, default=4)
+    parser.add_argument('--separateBlocks', type=bool, default=True)
+    parser.add_argument('--indentMode', type=int, choices=[1, -1, 0], default=1)
+    parser.add_argument('--addSpaces', type=float, choices=[1, 0.5, 0], default=0.5)
+    parser.add_argument('--matrixIndent', type=int,  choices=[1, 0], default=1)
+    parser.add_argument('-i' ,'--inplace', action=argparse.BooleanOptionalAction)
 
 
-if __name__ == '__main__':
-    main()
+    args = parser.parse_args()
+ 
+    formatter = Formatter(args.indentWidth, args.separateBlocks, args.indentMode, args.addSpaces, args.matrixIndent)
+
+    for file_name in args.file:
+        formatter.formatFile(file_name, args.startLine, args.endLine, out_file=file_name if args.inplace else None)
