@@ -1,6 +1,6 @@
 /*
     This file is part of matlab - formatter - vscode
-    Copyright(C) 2019 - 2021 Benjamin "Mogli" Mann
+    Copyright(C) 2019 - 2023 Benjamin "Mogli" Mann
 
     This program is free software: you can redistribute it and / or modify
     it under the terms of the GNU General Public License as published by
@@ -30,14 +30,11 @@ class MatlabFormatter {
     constructor() {
         this.machine_os = os.platform();
         console.log(this.machine_os);
-        this.py = vscode.workspace.getConfiguration('matlab-formatter')['pythonPath'];
-        if (this.py == '' && this.machine_os == 'win32') {
+        this.py = '';
+        if (this.machine_os == 'win32') {
             this.py = 'python ';
         }
-        this.formatter = vscode.workspace.getConfiguration('matlab-formatter')['formatterPath'];
-        if (this.formatter == '') {
-            this.formatter = '"'+ __dirname + '/formatter/matlab_formatter.py"';
-        }
+        this.formatter = '"'+ __dirname + '/formatter/matlab_formatter.py"';
     }
 
     formatDocument(document, range) {
@@ -51,7 +48,6 @@ class MatlabFormatter {
 
     format(document, range) {
         return new Promise((resolve, reject) => {
-            // let formatter = this.py +'"'+ __dirname + '/formatter/matlab_formatter.py"';
             let indentwidth = " --indentWidth=" + vscode.workspace.getConfiguration('matlab-formatter')['indentwidth'];
             let separateBlocks = " --separateBlocks=" + vscode.workspace.getConfiguration('matlab-formatter')['separateBlocks'];
             let indentMode = " --indentMode=" + vscode.workspace.getConfiguration('matlab-formatter')['indentMode'];

@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.11.0
+important security update:
+remove options `pythonPath` and `formatterPath`
+
 ### 2.10.5
 bugfix: comments before multiline statement
 
